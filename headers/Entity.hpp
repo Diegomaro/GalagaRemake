@@ -2,13 +2,14 @@
 #include <string>
 #include <ResourceManager.hpp>
 
-class Entity{
+class Entity: public sf::Sprite {
     public:
-        Entity(ResourceManager& rm, std::string fileName, std::string mTextureKey);
-        std::string getTextureKey();
-    private:
-        sf::Sprite entity;
-        std::string textureKey;
-        sf::Vector2i pos;
-        sf::Vector2i vel;
+        virtual void setVelocity(sf::Vector2f velocity);
+        virtual sf::Vector2f getVelocity();
+        virtual void setSpriteDimensions(sf::IntRect spriteDimensions);
+        virtual sf::IntRect getSpriteDimensions();
+        virtual void setSprite(int xPos, int yPos);
+    protected:
+        sf::Vector2f _velocity;
+        sf::IntRect _sprite_dimensions;
 };

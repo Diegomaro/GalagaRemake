@@ -1,10 +1,22 @@
 #include "Entity.hpp"
 
-Entity::Entity(ResourceManager& rm, std::string fileName, std::string mTextureKey): pos({0,0}), vel({0,0}), textureKey(mTextureKey){
-    rm.loadTexture(textureKey, fileName);
-    entity.setTexture(rm.getTexture(textureKey));
+void Entity::setVelocity(sf::Vector2f velocity){
+    _velocity = velocity;
+}
+sf::Vector2f Entity::getVelocity(){
+    return _velocity;
 }
 
-std::string Entity::getTextureKey(){
-    return textureKey;
+void Entity::setSprite(int xPos, int yPos){
+    _sprite_dimensions.top = yPos*16;
+    _sprite_dimensions.left = xPos*16;
+    setTextureRect(_sprite_dimensions);
+}
+
+void Entity::setSpriteDimensions(sf::IntRect spriteDimensions){
+    _sprite_dimensions = spriteDimensions;
+}
+
+sf::IntRect Entity::getSpriteDimensions(){
+    return _sprite_dimensions;
 }

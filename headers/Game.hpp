@@ -1,6 +1,8 @@
 #pragma once
 #include <SFML/Graphics.hpp>
 #include "ResourceManager.hpp"
+#include "Player.hpp"
+#include "InsectEnemy.hpp"
 
 class Game{
     public:
@@ -8,19 +10,23 @@ class Game{
         void start();
         void loop();
         void updateLogic();
+        void updateAnimation();
         void eventHandler();
+        void handleInput();
         void render();
     private:
+        void loadSprites();
         void createPlayer();
-        void createLantern();
+        void createEnemy();
         sf::RenderWindow window;
         sf::Time elapsedTime;
         sf::Clock clock;
         int ctr;
-
-        sf::Sprite player;
-        sf::Sprite lantern;
+        Player player;
+        InsectEnemy enemy;
 
         ResourceManager rm;
-        //EntityManager em;
+        const sf::Time timestep = sf::milliseconds(16.6667f);
+        const float SCALE = 3;
+        const int animationTick = 5;
 };
