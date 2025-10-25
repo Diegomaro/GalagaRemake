@@ -9,9 +9,7 @@ void Game::start(){
     createPlayer();
     createEnemy();
     window.setVisible(true);
-    while(window.isOpen()){
-        loop();
-    }
+    while(window.isOpen()) loop();
 }
 
 void Game::loadSprites(){
@@ -20,14 +18,10 @@ void Game::loadSprites(){
 
 void Game::createPlayer(){
     player.setTexture(rm.getTexture("sprites"));
-    player.setScale({SCALE, SCALE});
-    player.setPosition({(112-8)*3, 260*3});
-    player.setVelocity({0,0});
 }
 
 void Game::createEnemy(){
     enemy.setTexture(rm.getTexture("sprites"));
-    enemy.setScale({SCALE, SCALE});
 }
 
 void Game::loop(){
@@ -38,12 +32,16 @@ void Game::loop(){
         ctr++;
         elapsedTime -= timestep;
         updateLogic();
-        updateAnimation();
     }
     render();
 }
 
 void Game::updateLogic(){
+    checkPlayerCollisionWithWalls();
+    moveBullets();
+}
+
+void Game::checkPlayerCollisionWithWalls(){
     int playerOutOfBondsPos = player.getPosition().x + player.getScale().x*player.getLocalBounds().width + player.getVelocity().x;
     int playerOutOfBondsNeg = player.getPosition().x + player.getVelocity().x;
     
@@ -54,28 +52,22 @@ void Game::updateLogic(){
     }
 }
 
-void Game::updateAnimation(){
-    /*ctr2 += 1;
-    if(ctr2 >= animationTick) {
-        ctr2 = 0;
-        if(ctr1 >= 7){
-            ctr1 = 0;
-        }
-        player.setSprite(ctr1, 0);
-        ctr1 += 1;
-    }*/
+void Game::moveBullets(){
+    while(player.bullets.hasNext()){
+        player.bullets.addVelToNode({0,-5});
+    }
 }
+
 
 //only once per event
 void Game::eventHandler(){
-    //sf::Vector2f v = {0,0};
     sf::Event event;
     while(window.pollEvent(event)){
         if(event.type == sf::Event::Closed){
             window.close();
         } 
         else if(event.type == sf::Event::KeyPressed && sf::Keyboard::isKeyPressed(sf::Keyboard::Space)){
-            std::cout << "shoot!" << std::endl;
+            player.ShootBullet(rm.getTexture("sprites"));
         }
     }
 }
@@ -92,5 +84,12 @@ void Game::render(){
     window.clear();
     window.draw(enemy);
     window.draw(player);
+    renderBullets();
     window.display();
+}
+
+void Game::renderBullets(){
+    while(player.bullets.hasNext()){
+        window.draw(player.bullets.getNextNodeData());
+    }
 }

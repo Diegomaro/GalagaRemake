@@ -10,7 +10,6 @@ class Game{
         void start();
         void loop();
         void updateLogic();
-        void updateAnimation();
         void eventHandler();
         void handleInput();
         void render();
@@ -18,6 +17,9 @@ class Game{
         void loadSprites();
         void createPlayer();
         void createEnemy();
+        void checkPlayerCollisionWithWalls();
+        void moveBullets();
+        void renderBullets();
         sf::RenderWindow window;
         sf::Time elapsedTime;
         sf::Clock clock;
