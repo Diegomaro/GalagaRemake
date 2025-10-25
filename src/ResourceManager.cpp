@@ -1,5 +1,9 @@
 #include "ResourceManager.hpp"
 
+ResourceManager::~ResourceManager(){
+    textureMap.clear();
+}
+
 bool ResourceManager::loadTexture(std::string name, std::string fileName){
     sf::Texture texture;
     if(!texture.loadFromFile(fileName)){

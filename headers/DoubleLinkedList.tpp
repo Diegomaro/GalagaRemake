@@ -156,12 +156,13 @@ T &DoubleLinkedList<T>::getNextNodeData(){
 	_curNode = _curNode->next;
 	return tmp->data;
 }
+
 template <typename T>
 void DoubleLinkedList<T>::addVelToNode(sf::Vector2f velocity){
 	Node* tmp = _curNode;
 	_curNode = _curNode->next;
 	tmp->data.setPosition(tmp->data.getPosition() + velocity);
-	if(tmp->data.getPosition().y < 10) deleteNode(tmp);
+	if(tmp->data.getPosition().y < 10) eraseNode(tmp);
 }
 
 

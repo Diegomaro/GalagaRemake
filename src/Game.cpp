@@ -58,7 +58,6 @@ void Game::moveBullets(){
     }
 }
 
-
 //only once per event
 void Game::eventHandler(){
     sf::Event event;
