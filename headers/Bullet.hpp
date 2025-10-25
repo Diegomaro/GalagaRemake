@@ -1,4 +1,5 @@
 #pragma once
+#include <SFML/Graphics.hpp>
 #include "Entity.hpp"
 
 class Bullet : public Entity{

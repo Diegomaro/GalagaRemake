@@ -2,9 +2,13 @@
 #include <iostream>
 #include <cmath>
 
-Game::Game(): window(sf::VideoMode(224*3, 288*3), "Game"), ctr(0) {}
+using namespace GameConstants;
+
+Game::Game(): window(sf::VideoMode(WINDOW_WIDTH, WINDOW_HEIGHT), "Game") {}
 
 void Game::start(){
+    tmp_ctr = 0;
+    tmp_ctr2 = 0;
     loadSprites();
     createPlayer();
     createEnemy();
@@ -25,16 +29,20 @@ void Game::createEnemy(){
 }
 
 void Game::loop(){
-    eventHandler();
     handleInput();
+    eventHandler();
     elapsedTime += clock.restart();
-    while(elapsedTime >= timestep){
-        ctr++;
-        elapsedTime -= timestep;
+    while(elapsedTime >= TIMESTEP){
+        elapsedTime -= TIMESTEP;
         updateLogic();
+        if(player.shootCooldown > 0) player.shootCooldown -= 1;
+        render();
     }
-    render();
-}
+    /* render could go here, but given this is a simple game it doesnt need that
+    FPS without constantly rendering > 1000
+    FPS with constantly rendering < 600
+    */
+    }
 
 void Game::updateLogic(){
     checkPlayerCollisionWithWalls();
@@ -44,8 +52,8 @@ void Game::updateLogic(){
 void Game::checkPlayerCollisionWithWalls(){
     int playerOutOfBondsPos = player.getPosition().x + player.getScale().x*player.getLocalBounds().width + player.getVelocity().x;
     int playerOutOfBondsNeg = player.getPosition().x + player.getVelocity().x;
-    
-    if(playerOutOfBondsPos < (224+2)*3 && player.getVelocity().x > 0){
+
+    if(playerOutOfBondsPos <= WINDOW_WIDTH && player.getVelocity().x > 0){
         player.setPosition(player.getPosition() + player.getVelocity());
     } else if(playerOutOfBondsNeg > 0 && player.getVelocity().x < 0){
         player.setPosition(player.getPosition() + player.getVelocity());
@@ -54,7 +62,7 @@ void Game::checkPlayerCollisionWithWalls(){
 
 void Game::moveBullets(){
     while(player.bullets.hasNext()){
-        player.bullets.addVelToNode({0,-5});
+        player.bullets.addVelToNode({0,-BULLET_SPEED});
     }
 }
 
@@ -64,18 +72,23 @@ void Game::eventHandler(){
     while(window.pollEvent(event)){
         if(event.type == sf::Event::Closed){
             window.close();
-        } 
-        else if(event.type == sf::Event::KeyPressed && sf::Keyboard::isKeyPressed(sf::Keyboard::Space)){
-            player.ShootBullet(rm.getTexture("sprites"));
         }
-    }
+   }
 }
 
 //constatly checks, doesnt get cleaned, more consistent
 void Game::handleInput(){
     sf::Vector2f v = {0, 0};
-    if(sf::Keyboard::isKeyPressed(sf::Keyboard::A)) v.x += -5;
-    if(sf::Keyboard::isKeyPressed(sf::Keyboard::D)) v.x += 5;
+    if(sf::Keyboard::isKeyPressed(sf::Keyboard::A)) 
+        v.x += -PLAYER_SPEED;
+    if(sf::Keyboard::isKeyPressed(sf::Keyboard::D))
+        v.x += PLAYER_SPEED;
+    if(sf::Keyboard::isKeyPressed(sf::Keyboard::Space)){
+        if(player.shootCooldown == 0){
+            player.shootCooldown += 15;
+            player.ShootBullet(rm.getTexture("sprites"));
+        }
+    }
     player.setVelocity(v);
 }
 

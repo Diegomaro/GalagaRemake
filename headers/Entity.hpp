@@ -1,7 +1,6 @@
 #pragma once
 #include <string>
-#include <ResourceManager.hpp>
-
+#include <SFML/Graphics.hpp>
 class Entity: public sf::Sprite {
     public:
         virtual void setVelocity(sf::Vector2f velocity);

@@ -3,7 +3,7 @@
 #include "ResourceManager.hpp"
 #include "Player.hpp"
 #include "InsectEnemy.hpp"
-
+#include "GameConstants.hpp"
 class Game{
     public:
         Game();
@@ -20,15 +20,13 @@ class Game{
         void checkPlayerCollisionWithWalls();
         void moveBullets();
         void renderBullets();
+    private:
         sf::RenderWindow window;
         sf::Time elapsedTime;
         sf::Clock clock;
-        int ctr;
         Player player;
         InsectEnemy enemy;
-
         ResourceManager rm;
-        const sf::Time timestep = sf::milliseconds(16.6667f);
-        const float SCALE = 3;
-        const int animationTick = 5;
+        int tmp_ctr;
+        int tmp_ctr2;
 };

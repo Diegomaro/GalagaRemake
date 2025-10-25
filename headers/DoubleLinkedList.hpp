@@ -1,5 +1,6 @@
 #pragma once
 #include <SFML/Graphics.hpp>
+#include <iostream>
 
 template <typename T>
 class DoubleLinkedList {
@@ -20,7 +21,6 @@ public:
 	bool deleteTail();
 	bool deleteNode(T nData);
 	bool deleteNode(Node* node);
-	Node* eraseNode(Node* node);
 	bool hasNext();
 	T &getNextNodeData();
 	void addVelToNode(sf::Vector2f velocity);

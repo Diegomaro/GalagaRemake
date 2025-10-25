@@ -8,5 +8,6 @@ class Player : public Entity {
         Player();
         void ShootBullet(sf::Texture &texture);
         DoubleLinkedList<Bullet> bullets;
+        int shootCooldown;
     private:
 };

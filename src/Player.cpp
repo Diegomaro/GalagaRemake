@@ -1,11 +1,10 @@
 #include "Player.hpp"
 
-Player::Player(){
+Player::Player(): shootCooldown(0) {
     _sprite_dimensions = sf::IntRect(6*16,0*16,16,16);
     setTextureRect(_sprite_dimensions);
     setScale({3, 3});
     setPosition({(112-8)*3, 260*3});
-
 } 
 
 void Player::ShootBullet(sf::Texture &texture){

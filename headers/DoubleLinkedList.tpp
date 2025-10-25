@@ -1,4 +1,3 @@
-#include <iostream>
 #include "DoubleLinkedList.hpp"
 
 template <typename T>
@@ -162,7 +161,7 @@ void DoubleLinkedList<T>::addVelToNode(sf::Vector2f velocity){
 	Node* tmp = _curNode;
 	_curNode = _curNode->next;
 	tmp->data.setPosition(tmp->data.getPosition() + velocity);
-	if(tmp->data.getPosition().y < 10) eraseNode(tmp);
+	if(tmp->data.getPosition().y < 0) deleteNode(tmp);
 }
 
 
