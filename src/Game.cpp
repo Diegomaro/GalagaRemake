@@ -11,7 +11,8 @@ void Game::start(){
     tmp_ctr2 = 0;
     loadSprites();
     createPlayer();
-    createEnemy();
+    createEnemy({20*3, 6*3});
+    createEnemy({40*3, 0*3});
     window.setVisible(true);
     while(window.isOpen()) loop();
 }
@@ -24,8 +25,10 @@ void Game::createPlayer(){
     player.setTexture(rm.getTexture("sprites"));
 }
 
-void Game::createEnemy(){
+void Game::createEnemy(sf::Vector2f enemyPosition){
+    Enemy enemy(enemyPosition);
     enemy.setTexture(rm.getTexture("sprites"));
+    enemies.insertTail(enemy);
 }
 
 void Game::loop(){
@@ -54,23 +57,30 @@ void Game::updateLogic(){
 void Game::collisionHandler(){
     //player
     // enemy bullets
-    while(player.bullets.hasNext()){
-        Bullet *bullet = &player.bullets.getNextNodeData();
-        sf::FloatRect bulletHitbox = bullet->getHitbox();
-        sf::FloatRect enemyHitbox = enemy.getHitbox();
-        float bulletLowY = bulletHitbox.top;
-        float bulletHighY = bulletHitbox.top + bulletHitbox.height;
-        float enemyLowY = enemyHitbox.top;
-        float enemyHighY = enemyHitbox.top + enemyHitbox.height;
-        if(bulletLowY <= enemyHighY && bulletHighY >= enemyLowY){
-            float bulletLowX = bulletHitbox.left;
-            float bulletHighX = bulletHitbox.left + bulletHitbox.width;
-            float enemyLowX = enemyHitbox.left;
-            float enemyHighX = enemyHitbox.left + enemyHitbox.width;
-            if(bulletLowX <= enemyHighX && bulletHighX >= enemyLowX){
-                std::cout << "collision detected!" << std::endl;
-                //collision effect
-            }            
+    while(enemies.hasNext()){
+        Enemy *enemy = &enemies.getNextNodeData();
+        while(player.bullets.hasNext()){
+            Bullet *bullet = &player.bullets.getNextNodeData();
+            sf::FloatRect bulletHitbox = bullet->getHitbox();
+            sf::FloatRect enemyHitbox = enemy->getHitbox();
+            float bulletLowY = bulletHitbox.top;
+            float bulletHighY = bulletHitbox.top + bulletHitbox.height;
+            float enemyLowY = enemyHitbox.top;
+            float enemyHighY = enemyHitbox.top + enemyHitbox.height;
+            if(bulletLowY <= enemyHighY && bulletHighY >= enemyLowY){
+                float bulletLowX = bulletHitbox.left;
+                float bulletHighX = bulletHitbox.left + bulletHitbox.width;
+                float enemyLowX = enemyHitbox.left;
+                float enemyHighX = enemyHitbox.left + enemyHitbox.width;
+                if(bulletLowX <= enemyHighX && bulletHighX >= enemyLowX){
+                    std::cout << "collision detected!" << std::endl;
+                    player.bullets.deleteNode(*bullet);
+                    enemy->modifyHealth(-1);
+                    if(enemy->getHealth() <= 0){
+                        enemies.deleteNode(*enemy);
+                    }
+                }            
+            }
         }
     }
 }
@@ -119,7 +129,7 @@ void Game::inputHandler(){
 
 void Game::render(){
     window.clear();
-    window.draw(enemy);
+    renderEnemies();
     window.draw(player);
     renderBullets();
     window.display();
@@ -128,5 +138,11 @@ void Game::render(){
 void Game::renderBullets(){
     while(player.bullets.hasNext()){
         window.draw(player.bullets.getNextNodeData());
+    }
+}
+
+void Game::renderEnemies(){
+    while(enemies.hasNext()){
+        window.draw(enemies.getNextNodeData());
     }
 }

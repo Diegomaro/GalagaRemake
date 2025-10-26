@@ -2,8 +2,10 @@
 #include <SFML/Graphics.hpp>
 #include "ResourceManager.hpp"
 #include "Player.hpp"
-#include "InsectEnemy.hpp"
+#include "Enemy.hpp"
 #include "GameConstants.hpp"
+#include "DoubleLinkedList.hpp"
+
 class Game{
     public:
         Game();
@@ -16,18 +18,19 @@ class Game{
     private:
         void loadSprites();
         void createPlayer();
-        void createEnemy();
+        void createEnemy(sf::Vector2f enemyPosition);
 
         void collisionHandler();
         void movePlayer();
         void moveBullets();
         void renderBullets();
+        void renderEnemies();
     private:
         sf::RenderWindow window;
         sf::Time elapsedTime;
         sf::Clock clock;
         Player player;
-        InsectEnemy enemy; //turn into linked list
+        DoubleLinkedList<Enemy> enemies;
         ResourceManager rm;
         int tmp_ctr;
         int tmp_ctr2;

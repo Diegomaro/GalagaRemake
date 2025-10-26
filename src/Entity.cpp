@@ -8,9 +8,21 @@ sf::Vector2f Entity::getVelocity(){
 }
 
 sf::FloatRect Entity::getHitbox(){
-    hitbox.left = getPosition().x;
-    hitbox.top = getPosition().y;
-    return hitbox;
+    _hitbox.left = getPosition().x;
+    _hitbox.top = getPosition().y;
+    return _hitbox;
+}
+
+void Entity::setHealt(int health){
+    _health = health;
+}
+
+void Entity::modifyHealth(int health){
+    _health += health;
+}
+
+int Entity::getHealth(){
+    return _health;
 }
 
 void Entity::setSprite(int xPos, int yPos){

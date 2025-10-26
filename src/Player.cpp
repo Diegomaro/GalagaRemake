@@ -5,8 +5,9 @@ Player::Player(): shootCooldown(0) {
     setTextureRect(_sprite_dimensions);
     setScale({3, 3});
     setPosition({(112-8)*3, 260*3});
-    hitbox.width = 16*3;
-    hitbox.height = 16*3;
+    _hitbox.width = 16*3;
+    _hitbox.height = 16*3;
+    _health = 3;
 }
 
 void Player::ShootBullet(sf::Texture &texture){
