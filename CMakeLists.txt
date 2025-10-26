@@ -6,5 +6,6 @@ set(CMAKE_PREFIX_PATH "/usr/local/SFML-2.6.1")
 find_package(SFML 2.6 COMPONENTS system window graphics REQUIRED)
 file(GLOB SOURCES CONFIGURE_DEPENDS "src/*.cpp")
 add_executable(game ${SOURCES})
+
 target_include_directories(game PRIVATE headers)
 target_link_libraries(game PRIVATE sfml-system sfml-window sfml-graphics)

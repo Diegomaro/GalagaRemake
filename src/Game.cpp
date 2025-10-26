@@ -7,18 +7,19 @@ using namespace GameConstants;
 Game::Game(): window(sf::VideoMode(WINDOW_WIDTH, WINDOW_HEIGHT), "Game") {}
 
 void Game::start(){
-    tmp_ctr = 0;
-    tmp_ctr2 = 0;
     loadSprites();
     createPlayer();
     createEnemy({20*3, 6*3});
     createEnemy({40*3, 0*3});
+    createBackgrounds();
     window.setVisible(true);
     while(window.isOpen()) loop();
 }
 
 void Game::loadSprites(){
     rm.loadTexture("sprites", "media/game_sprites.png");
+    rm.loadTexture("background_1", "media/background_1.png");
+    rm.loadTexture("background_2", "media/background_2.png");
 }
 
 void Game::createPlayer(){
@@ -30,6 +31,12 @@ void Game::createEnemy(sf::Vector2f enemyPosition){
     enemy.setTexture(rm.getTexture("sprites"));
     enemies.insertTail(enemy);
 }
+void Game::createBackgrounds(){
+    background1.setTexture(rm.getTexture("background_1"));
+    background2.setTexture(rm.getTexture("background_2"));
+    background2.setPixelSpeed(2);
+}
+
 
 void Game::loop(){
     inputHandler();
@@ -132,6 +139,7 @@ void Game::inputHandler(){
 
 void Game::render(){
     window.clear();
+    renderBackgrounds();
     renderEnemies();
     window.draw(player);
     renderBullets();
@@ -148,4 +156,11 @@ void Game::renderEnemies(){
     while(enemies.hasNext()){
         window.draw(enemies.getNextNodeData());
     }
+}
+
+void Game::renderBackgrounds(){
+    background1.changeFrame();
+    window.draw(background1);
+    background2.changeFrame();
+    window.draw(background2);
 }

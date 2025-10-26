@@ -1,4 +1,4 @@
 build
 run.sh
 *.json
-media
+media/*.png
