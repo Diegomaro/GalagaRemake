@@ -29,7 +29,7 @@ void Game::createEnemy(){
 }
 
 void Game::loop(){
-    handleInput();
+    inputHandler();
     eventHandler();
     elapsedTime += clock.restart();
     while(elapsedTime >= TIMESTEP){
@@ -45,14 +45,39 @@ void Game::loop(){
     }
 
 void Game::updateLogic(){
-    checkPlayerCollisionWithWalls();
+    movePlayer();
     moveBullets();
+    collisionHandler();
+    // kill entities
 }
 
-void Game::checkPlayerCollisionWithWalls(){
-    int playerOutOfBondsPos = player.getPosition().x + player.getScale().x*player.getLocalBounds().width + player.getVelocity().x;
-    int playerOutOfBondsNeg = player.getPosition().x + player.getVelocity().x;
+void Game::collisionHandler(){
+    //player
+    // enemy bullets
+    while(player.bullets.hasNext()){
+        Bullet *bullet = &player.bullets.getNextNodeData();
+        sf::FloatRect bulletHitbox = bullet->getHitbox();
+        sf::FloatRect enemyHitbox = enemy.getHitbox();
+        float bulletLowY = bulletHitbox.top;
+        float bulletHighY = bulletHitbox.top + bulletHitbox.height;
+        float enemyLowY = enemyHitbox.top;
+        float enemyHighY = enemyHitbox.top + enemyHitbox.height;
+        if(bulletLowY <= enemyHighY && bulletHighY >= enemyLowY){
+            float bulletLowX = bulletHitbox.left;
+            float bulletHighX = bulletHitbox.left + bulletHitbox.width;
+            float enemyLowX = enemyHitbox.left;
+            float enemyHighX = enemyHitbox.left + enemyHitbox.width;
+            if(bulletLowX <= enemyHighX && bulletHighX >= enemyLowX){
+                std::cout << "collision detected!" << std::endl;
+                //collision effect
+            }            
+        }
+    }
+}
 
+void Game::movePlayer(){
+    int playerOutOfBondsPos = player.getPosition().x + player.getHitbox().width + player.getVelocity().x;
+    int playerOutOfBondsNeg = player.getPosition().x + player.getVelocity().x;
     if(playerOutOfBondsPos <= WINDOW_WIDTH && player.getVelocity().x > 0){
         player.setPosition(player.getPosition() + player.getVelocity());
     } else if(playerOutOfBondsNeg > 0 && player.getVelocity().x < 0){
@@ -66,7 +91,7 @@ void Game::moveBullets(){
     }
 }
 
-//only once per event
+//only once per event, some events cycle
 void Game::eventHandler(){
     sf::Event event;
     while(window.pollEvent(event)){
@@ -77,9 +102,9 @@ void Game::eventHandler(){
 }
 
 //constatly checks, doesnt get cleaned, more consistent
-void Game::handleInput(){
+void Game::inputHandler(){
     sf::Vector2f v = {0, 0};
-    if(sf::Keyboard::isKeyPressed(sf::Keyboard::A)) 
+    if(sf::Keyboard::isKeyPressed(sf::Keyboard::A))
         v.x += -PLAYER_SPEED;
     if(sf::Keyboard::isKeyPressed(sf::Keyboard::D))
         v.x += PLAYER_SPEED;

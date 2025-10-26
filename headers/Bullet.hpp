@@ -4,5 +4,6 @@
 
 class Bullet : public Entity{
     public:
-        Bullet(sf::Vector2f playerPosition);
+    sf::FloatRect getHitbox() override;
+    Bullet(sf::Vector2f playerPosition);
 };

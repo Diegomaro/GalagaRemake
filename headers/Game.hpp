@@ -11,13 +11,15 @@ class Game{
         void loop();
         void updateLogic();
         void eventHandler();
-        void handleInput();
+        void inputHandler();
         void render();
     private:
         void loadSprites();
         void createPlayer();
         void createEnemy();
-        void checkPlayerCollisionWithWalls();
+
+        void collisionHandler();
+        void movePlayer();
         void moveBullets();
         void renderBullets();
     private:
@@ -25,7 +27,7 @@ class Game{
         sf::Time elapsedTime;
         sf::Clock clock;
         Player player;
-        InsectEnemy enemy;
+        InsectEnemy enemy; //turn into linked list
         ResourceManager rm;
         int tmp_ctr;
         int tmp_ctr2;
