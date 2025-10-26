@@ -18,7 +18,7 @@ void Game::start(){
 }
 
 void Game::loadSprites(){
-    rm.loadTexture("sprites", "media/galaga_sprites.png");
+    rm.loadTexture("sprites", "media/game_sprites.png");
 }
 
 void Game::createPlayer(){
@@ -57,9 +57,11 @@ void Game::updateLogic(){
 void Game::collisionHandler(){
     //player
     // enemy bullets
+    bool enemyIsAlive = true;
     while(enemies.hasNext()){
         Enemy *enemy = &enemies.getNextNodeData();
-        while(player.bullets.hasNext()){
+        enemyIsAlive = true;
+        while(player.bullets.hasNext() && enemyIsAlive){
             Bullet *bullet = &player.bullets.getNextNodeData();
             sf::FloatRect bulletHitbox = bullet->getHitbox();
             sf::FloatRect enemyHitbox = enemy->getHitbox();
@@ -78,6 +80,7 @@ void Game::collisionHandler(){
                     enemy->modifyHealth(-1);
                     if(enemy->getHealth() <= 0){
                         enemies.deleteNode(*enemy);
+                        enemyIsAlive = false;
                     }
                 }            
             }

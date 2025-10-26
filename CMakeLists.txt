@@ -1,7 +1,9 @@
 cmake_minimum_required(VERSION 3.10)
 project(game)
 set(CMAKE_CXX_STANDARD 17)
-find_package(SFML 2.5 COMPONENTS system window graphics REQUIRED)
+set(CMAKE_PREFIX_PATH "/usr/local/SFML-2.6.1")
+
+find_package(SFML 2.6 COMPONENTS system window graphics REQUIRED)
 file(GLOB SOURCES CONFIGURE_DEPENDS "src/*.cpp")
 add_executable(game ${SOURCES})
 target_include_directories(game PRIVATE headers)
