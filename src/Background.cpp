@@ -1,6 +1,6 @@
 #include "Background.hpp"
 
-Background::Background(): _aniCounter(0), _aniSpeedCounter(0), _backgroundState(false), _pixelSpeed(1), _aniSpeed(1) {
+Background::Background(): _aniCounter(0), _aniSpeedCounter(0), _backgroundState(false), _pixelSpeed(2), _aniSpeed(1) {
     setTextureRect({0, 288, 224, 288});
     setScale({3, 3});
     setPosition({0, 0});
@@ -16,7 +16,7 @@ void Background::changeFrame(){
     }
     sf::IntRect backgroundCopy = getTextureRect();
 
-    if(_aniCounter > 10){
+    if(_aniCounter > 5){
         _aniCounter = 0;
         if(_backgroundState == false){
             backgroundCopy.top += 576;

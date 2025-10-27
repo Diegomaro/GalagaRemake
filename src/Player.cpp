@@ -11,7 +11,7 @@ Player::Player(): shootCooldown(0) {
 }
 
 void Player::ShootBullet(sf::Texture &texture){
-    Bullet bullet = Bullet(getPosition());
+    Bullet bullet = Bullet(getPosition(), {0, -10.0f});
     bullet.setTexture(texture);
     bullets.insertTail(bullet);
 }

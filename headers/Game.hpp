@@ -20,21 +20,21 @@ class Game{
         void loadSprites();
         void createPlayer();
         void createEnemy(sf::Vector2f enemyPosition);
-        void createBackgrounds();
+        void createBackground();
 
         void collisionHandler();
+        bool collisionChecker(sf::FloatRect entityHitbox1, sf::FloatRect entityHitbox2);
         void movePlayer();
         void moveBullets();
         void renderBullets();
         void renderEnemies();
-        void renderBackgrounds();
+        void renderBackground();
     private:
         sf::RenderWindow window;
         sf::Time elapsedTime;
         sf::Clock clock;
         ResourceManager rm;
         Player player;
-        Background background1;
-        Background background2;
+        Background background;
         DoubleLinkedList<Enemy> enemies;
 };

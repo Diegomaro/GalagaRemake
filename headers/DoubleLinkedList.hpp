@@ -23,7 +23,6 @@ public:
 	bool deleteNode(Node* node);
 	bool hasNext();
 	T &getNextNodeData();
-	void addVelToNode(sf::Vector2f velocity);
 	bool isEmpty();
 	bool clear();
 private:
