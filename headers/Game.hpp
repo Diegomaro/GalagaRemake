@@ -26,6 +26,8 @@ class Game{
 
         void movePlayer();
         void moveBullets();
+        void moveEnemies();
+
         void decreaseDeadEnemyCounter();
         void collisionHandler();
         bool collisionChecker(sf::FloatRect entityHitbox1, sf::FloatRect entityHitbox2);
@@ -36,7 +38,11 @@ class Game{
         sf::RenderWindow window;
         sf::Time elapsedTime;
         sf::Clock clock;
+
+        int offset;
+
         ResourceManager rm;
+
         Player player;
         Background background;
         DoubleLinkedList<Enemy> enemies;

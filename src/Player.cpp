@@ -6,7 +6,7 @@ Player::Player(): Entity(), shootCooldown(0) {
     _health = 3;
 }
 
-void Player::update(){}
+void Player::moveEntity(){}
 
 void Player::ShootBullet(sf::Texture &texture){
     Bullet bullet = Bullet(getPosition(), {0, -10.0f});

@@ -3,7 +3,7 @@
 #include <SFML/Graphics.hpp>
 class Entity: public sf::Sprite {
     public:
-        virtual void update() = 0;
+        virtual void moveEntity() = 0;
         virtual sf::FloatRect getHitbox();
         void setVelocity(sf::Vector2f velocity);
         sf::Vector2f getVelocity();

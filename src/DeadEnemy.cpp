@@ -11,7 +11,7 @@ DeadEnemy::DeadEnemy(sf::Vector2f position): Entity() {
     _aniStartIndex = {15, 0};
 }
 
-void DeadEnemy::update(){}
+void DeadEnemy::moveEntity(){}
 
 int DeadEnemy::getDeadCounter(){
     return _deadCtr;

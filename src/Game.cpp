@@ -4,7 +4,7 @@
 
 using namespace GameConstants;
 
-Game::Game(): window(sf::VideoMode(WINDOW_WIDTH, WINDOW_HEIGHT), "Game") {}
+Game::Game(): window(sf::VideoMode(WINDOW_WIDTH, WINDOW_HEIGHT), "Game"), elapsedTime(sf::Time::Zero), offset(0) {}
 
 void Game::start(){
     loadSprites();
@@ -83,6 +83,7 @@ void Game::updateLogic(){
     if(player.shootCooldown > 0) player.shootCooldown -= 1;
     movePlayer();
     moveBullets();
+    moveEnemies();
     decreaseDeadEnemyCounter();
     collisionHandler();
 }
@@ -101,6 +102,15 @@ void Game::moveBullets(){
     while(player.bullets.hasNext()){
         Bullet *bullet = &player.bullets.getNextNodeData();
         bullet->move(bullet->getVelocity());
+    }
+}
+
+void Game::moveEnemies(){
+    Enemy *enemy = nullptr;
+    enemy->stepOffset();
+    while(enemies.hasNext()){
+        Enemy *enemy = &enemies.getNextNodeData();
+        enemy->moveEntity();
     }
 }
 

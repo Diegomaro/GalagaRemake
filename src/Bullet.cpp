@@ -9,7 +9,7 @@ Bullet::Bullet(sf::Vector2f playerPosition, sf::Vector2f velocity): Entity() {
     _health = 1;
 }
 
-void Bullet::update(){}
+void Bullet::moveEntity(){}
 
 sf::FloatRect Bullet::getHitbox(){
     _hitbox.left = getPosition().x + 7*3;

@@ -6,7 +6,7 @@
 class DeadEnemy : public Entity {
     public:
         DeadEnemy(sf::Vector2f position);
-        void update() override;
+        void moveEntity() override;
         void subtractToDeadCounter(int subtract);
         int getDeadCounter();
         bool operator == (DeadEnemy &deadEnemy);
