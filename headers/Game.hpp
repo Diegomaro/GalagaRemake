@@ -31,12 +31,7 @@ class Game{
         bool collisionChecker(sf::FloatRect entityHitbox1, sf::FloatRect entityHitbox2);
 
         void updateAnimations();
-        void deadEnemyAnimation(DeadEnemy &deadEnemy);
-
-        void renderBullets();
-        void renderEnemies();
-        void renderDeadEnemies();
-        void renderBackground();
+        void renderEntities();
     private:
         sf::RenderWindow window;
         sf::Time elapsedTime;

@@ -1,14 +1,17 @@
 #include "Enemy.hpp"
 
-Enemy::Enemy(sf::Vector2f position){
-    _sprite_dimensions = sf::IntRect(0*16,5*16,16,16);
-    setTextureRect(_sprite_dimensions);
-    setScale({3, 3});
+Enemy::Enemy(sf::Vector2f position): Entity(){
+    setSpriteDimensions(sf::IntRect(6*16,5*16,16,16));
     setPosition(position);
-    _hitbox.width = 16*3;
-    _hitbox.height = 16*3;
+
     _health = 1;
+    _aniTotal = 2;
+    _aniStartIndex = {6, 5};
+    _ticksPerFrame = 30;
+
 }
+
+void Enemy::update(){}
 
 bool Enemy::operator==(Enemy &enemy){
     if(getPosition() == enemy.getPosition()) return true;

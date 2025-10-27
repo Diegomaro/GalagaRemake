@@ -1,5 +1,18 @@
 #include "Entity.hpp"
 
+Entity::Entity(): _sprite_dimensions(0, 0, 16, 16),
+                _hitbox(0, 0, 16*3, 16*3),
+                _velocity(0.f, 0.f),
+                _ticksPerFrame(5),
+                _aniStartIndex(0, 0),
+                _aniCtr(0),
+                _aniTotal(1),
+                _aniTickCtr(0),
+                _health(0){
+    setTextureRect(_sprite_dimensions);
+    setScale({3.f, 3.f});
+}
+
 void Entity::setVelocity(sf::Vector2f velocity){
     _velocity = velocity;
 }
@@ -25,30 +38,40 @@ int Entity::getHealth(){
     return _health;
 }
 
-void Entity::stepAniCount(){
-    _aniCount += 1;
+void Entity::setTickPerFrame(int ticksPerFrame){
+    _ticksPerFrame = ticksPerFrame;
 }
 
-void Entity::resetAniCount(){
-    _aniCount = 0;
+int Entity::getTicksPerFrame(){
+    return _ticksPerFrame;
 }
 
-int Entity::getAniCount(){
-    return _aniCount;
+void Entity::stepAniCtr(){
+    _aniCtr += 1;
 }
 
-int Entity::getAniIndex(){
-    return _aniIndex;
+void Entity::resetAniCtr(){
+    _aniCtr = 0;
 }
 
-void Entity::stepAniTickCount(){
-    _aniTickCount += 1;
+int Entity::getAniCtr(){
+    return _aniCtr;
 }
-void Entity::resetAniTickCount(){
-    _aniTickCount = 0;
+
+int Entity::getAniTotal(){
+    return _aniTotal;
 }
-int Entity::getAniTickCount(){
-    return _aniTickCount;
+
+void Entity::stepAniTickCtr(){
+    _aniTickCtr += 1;
+}
+
+void Entity::resetAniTickCtr(){
+    _aniTickCtr = 0;
+}
+
+int Entity::getAniTickCtr(){
+    return _aniTickCtr;
 }
 
 void Entity::setAniStartIndex(sf::Vector2i aniStartIndex){
@@ -57,6 +80,21 @@ void Entity::setAniStartIndex(sf::Vector2i aniStartIndex){
 
 sf::Vector2i Entity::getAniStartIndex(){
     return _aniStartIndex;
+}
+
+void Entity::updateAnimation(){
+    if(getAniTickCtr() < getTicksPerFrame()){
+        stepAniTickCtr();
+    } else{
+        resetAniTickCtr();
+        stepAniCtr();
+        if(getAniCtr() >= getAniTotal()){
+            resetAniCtr();
+        }
+        sf::IntRect entityRect = getTextureRect();
+        entityRect.left = ((getAniStartIndex().x)*16 + (getAniCtr()*entityRect.width));
+        setTextureRect(entityRect);
+    }
 }
 
 void Entity::setSprite(int xPos, int yPos){

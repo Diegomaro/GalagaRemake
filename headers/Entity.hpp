@@ -3,36 +3,45 @@
 #include <SFML/Graphics.hpp>
 class Entity: public sf::Sprite {
     public:
-        virtual void setVelocity(sf::Vector2f velocity);
-        virtual sf::Vector2f getVelocity();
+        virtual void update() = 0;
         virtual sf::FloatRect getHitbox();
-        virtual void setHealt(int health);
-        virtual void modifyHealth(int health);
-        virtual int getHealth();
+        void setVelocity(sf::Vector2f velocity);
+        sf::Vector2f getVelocity();
+        void setHealt(int health);
+        void modifyHealth(int health);
+        int getHealth();
 
-        virtual void stepAniCount();
-        virtual void resetAniCount();
-        virtual int getAniCount();
-        virtual int getAniIndex();
+        void setTickPerFrame(int ticksPerFrame);
+        int getTicksPerFrame();
 
+        void stepAniCtr();
+        void resetAniCtr();
+        int getAniCtr();
+        void setAniTotal(int aniTotal);
+        int getAniTotal();
 
-        virtual void stepAniTickCount();
-        virtual void resetAniTickCount();
-        virtual int getAniTickCount();
+        void stepAniTickCtr();
+        void resetAniTickCtr();
+        int getAniTickCtr();
 
-        virtual void setAniStartIndex(sf::Vector2i aniStartIndex);
-        virtual sf::Vector2i getAniStartIndex();
+        void setAniStartIndex(sf::Vector2i aniStartIndex);
+        sf::Vector2i getAniStartIndex();
 
-        virtual void setSpriteDimensions(sf::IntRect spriteDimensions);
-        virtual sf::IntRect getSpriteDimensions();
-        virtual void setSprite(int xPos, int yPos);
+        void updateAnimation();
+
+        void setSprite(int xPos, int yPos);
+        void setSpriteDimensions(sf::IntRect spriteDimensions);
+        sf::IntRect getSpriteDimensions();
     protected:
-        sf::Vector2f _velocity;
+        Entity();
         sf::IntRect _sprite_dimensions;
         sf::FloatRect _hitbox;
-        int _health;
-        int _aniIndex;
-        int _aniCount;
-        int _aniTickCount;
+        sf::Vector2f _velocity;
+
+        int _ticksPerFrame;
+        int _aniCtr; //aniCount
+        int _aniTotal; //aniIndex
+        int _aniTickCtr; //aniTickCount
         sf::Vector2i _aniStartIndex;
+        int _health;
 };

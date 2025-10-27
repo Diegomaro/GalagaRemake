@@ -55,7 +55,6 @@ void Game::loop(){
     }
 }
 
-//constatly checks, doesnt get cleaned, more consistent
 void Game::inputHandler(){
     sf::Vector2f v = {0, 0};
     if(sf::Keyboard::isKeyPressed(sf::Keyboard::A))
@@ -71,7 +70,6 @@ void Game::inputHandler(){
     player.setVelocity(v);
 }
 
-//only once per event, some events cycle
 void Game::eventHandler(){
     sf::Event event;
     while(window.pollEvent(event)){
@@ -118,7 +116,9 @@ void Game::decreaseDeadEnemyCounter(){
 
 void Game::collisionHandler(){
     //player hits enemy
+
     // enemy bullets
+
     //player bullets
     bool enemyIsAlive = true;
     while(enemies.hasNext()){
@@ -137,7 +137,6 @@ void Game::collisionHandler(){
                     enemy->modifyHealth(-1);
                     if(enemy->getHealth() <= 0){
                         createDeadEnemy(enemy->getPosition());
-                        //enemy death animation
                         enemies.deleteNode(*enemy);
                         enemyIsAlive = false;
                     }
@@ -167,59 +166,30 @@ bool Game::collisionChecker(sf::FloatRect hitbox1, sf::FloatRect hitbox2){
 
 void Game::render(){
     window.clear();
-    renderBackground();
-    renderEnemies();
-    renderDeadEnemies();
+    window.draw(background);
+    renderEntities();
     window.draw(player);
-    renderBullets();
     window.display();
 }
 
-void Game::updateAnimations(){
-    while(deadEnemies.hasNext()){
-        deadEnemyAnimation(deadEnemies.getNextNodeData());
-    }
-    //dead enemies
-    // set anicounter and aniMax
-}
-
-//change to all entities
-void Game::deadEnemyAnimation(DeadEnemy &deadEnemy){
-    if(deadEnemy.getAniTickCount() < ANIMATION_TICK){
-        deadEnemy.stepAniTickCount();
-    } else{
-        deadEnemy.resetAniTickCount();
-        deadEnemy.stepAniCount();
-        if(deadEnemy.getAniCount() >= deadEnemy.getAniIndex()){
-            deadEnemy.resetAniCount();
-        }
-        sf::IntRect entityRect = deadEnemy.getTextureRect();
-        entityRect.left = ((deadEnemy.getAniStartIndex().x)*16 + (deadEnemy.getAniCount()*entityRect.width));
-        deadEnemy.setTextureRect(entityRect);
-    }
-}
-
-
-void Game::renderBullets(){
+void Game::renderEntities(){
     while(player.bullets.hasNext()){
         window.draw(player.bullets.getNextNodeData());
     }
-}
-
-void Game::renderEnemies(){
     while(enemies.hasNext()){
         window.draw(enemies.getNextNodeData());
     }
-}
-
-void Game::renderDeadEnemies(){
     while(deadEnemies.hasNext()){
         window.draw(deadEnemies.getNextNodeData());
     }
 }
 
-void Game::renderBackground(){
-    //background.changeFrame(); commented to protect my eyes
-    window.draw(background);
-
+void Game::updateAnimations(){
+    while(deadEnemies.hasNext()){
+        deadEnemies.getNextNodeData().updateAnimation();
+    }
+    while(enemies.hasNext()){
+        enemies.getNextNodeData().updateAnimation();
+    }
+    background.changeFrame();
 }

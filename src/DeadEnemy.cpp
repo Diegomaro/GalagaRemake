@@ -1,19 +1,17 @@
 #include "DeadEnemy.hpp"
 
-DeadEnemy::DeadEnemy(sf::Vector2f position) {
-    _sprite_dimensions = sf::IntRect(15*16, 0, 32, 32);
-    setTextureRect(_sprite_dimensions);
-    setScale({3, 3});
+DeadEnemy::DeadEnemy(sf::Vector2f position): Entity() {
+    setSpriteDimensions(sf::IntRect(15*16, 0, 32, 32));
     setPosition(position);
-    _deadCtr = GameConstants::DEAD_ENEMY_COUNTER;
-    _aniTickCount = 0;
-    _aniIndex = 5;
-    _aniCount = 0;
-    _hitbox.width = 32;
-    _hitbox.height = 32;
     _health = 0;
+
+    _ticksPerFrame = 4;
+    _deadCtr = (_ticksPerFrame * 6) - 1;
+    _aniTotal = 5;
     _aniStartIndex = {15, 0};
 }
+
+void DeadEnemy::update(){}
 
 int DeadEnemy::getDeadCounter(){
     return _deadCtr;

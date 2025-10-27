@@ -6,6 +6,7 @@
 class Player : public Entity {
     public:
         Player();
+        void update() override;
         void ShootBullet(sf::Texture &texture);
         DoubleLinkedList<Bullet> bullets;
         int shootCooldown;

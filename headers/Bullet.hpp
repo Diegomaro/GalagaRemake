@@ -4,8 +4,8 @@
 
 class Bullet : public Entity{
     public:
-    Bullet(sf::Vector2f playerPosition, sf::Vector2f velocity);
-    sf::FloatRect getHitbox() override;
-    void addVelocity(sf::Vector2f velocity);
-    bool operator == (Bullet &bullet);
+        Bullet(sf::Vector2f playerPosition, sf::Vector2f velocity);
+        void update() override;
+        sf::FloatRect getHitbox() override;
+        bool operator == (Bullet &bullet);
 };

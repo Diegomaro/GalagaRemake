@@ -1,6 +1,6 @@
 #include "Background.hpp"
 
-Background::Background(): _aniCounter(0), _aniSpeedCounter(0), _backgroundState(false), _pixelSpeed(2), _aniSpeed(1) {
+Background::Background(): _aniCtr(0), _aniSpeedCounter(0), _backgroundState(false), _pixelSpeed(2), _ticksPerFrame(2) {
     setTextureRect({0, 288, 224, 288});
     setScale({3, 3});
     setPosition({0, 0});
@@ -8,16 +8,16 @@ Background::Background(): _aniCounter(0), _aniSpeedCounter(0), _backgroundState(
 }
 
 void Background::changeFrame(){
-    if(_aniSpeedCounter > _aniSpeed){
-        _aniSpeedCounter = 0;
-    } else{
-        _aniSpeedCounter +=1;
+    if(_aniSpeedCounter < _ticksPerFrame){
+        _aniSpeedCounter += 1;
         return;
+    } else{
+        _aniSpeedCounter = 0;
     }
     sf::IntRect backgroundCopy = getTextureRect();
 
-    if(_aniCounter > 5){
-        _aniCounter = 0;
+    if(_aniCtr > 5){
+        _aniCtr = 0;
         if(_backgroundState == false){
             backgroundCopy.top += 576;
             _backgroundState = true;
@@ -27,13 +27,13 @@ void Background::changeFrame(){
         }
     }
     if(_backgroundState == false){
-        if(backgroundCopy.top - _pixelSpeed < 0) backgroundCopy.top += 288; 
+        if(backgroundCopy.top - _pixelSpeed < 0) backgroundCopy.top += 288;
         backgroundCopy.top -= _pixelSpeed;
-    } else{ 
+    } else{
         if(backgroundCopy.top - _pixelSpeed < 576) backgroundCopy.top += 288;
         backgroundCopy.top -= _pixelSpeed;
     }
-    _aniCounter += 1;
+    _aniCtr += 1;
     setTextureRect(backgroundCopy);
 }
 

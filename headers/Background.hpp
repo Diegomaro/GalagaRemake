@@ -8,8 +8,8 @@ class Background : public sf::Sprite{
         void setPixelSpeed(int pixelSpeed);
     private:
         int _pixelSpeed;
-        int _aniCounter;
-        int _aniSpeed;
+        int _aniCtr;
+        int _ticksPerFrame;
         int _aniSpeedCounter;
         bool _backgroundState;
 };
