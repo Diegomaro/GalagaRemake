@@ -10,5 +10,9 @@ namespace GameConstants
     inline constexpr int SHOOT_COOLDOWN = 30;
     inline const sf::Time TIMESTEP = sf::milliseconds(1000.0f / 60.0f);
     inline constexpr int ANIMATION_TICK = 5;
+    inline constexpr int DEAD_ENEMY_COUNTER = 29;
+    /*30 = 5 anitick * 6 frames, but we only want
+    5 frames, but the fifth frame should be extended, so 30-1
+    */
 
 }

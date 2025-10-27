@@ -25,11 +25,19 @@ void Game::createPlayer(){
     player.setTexture(rm.getTexture("sprites"));
 }
 
-void Game::createEnemy(sf::Vector2f enemyPosition){
-    Enemy enemy(enemyPosition);
+void Game::createEnemy(sf::Vector2f position){
+    Enemy enemy(position);
     enemy.setTexture(rm.getTexture("sprites"));
     enemies.insertTail(enemy);
 }
+
+void Game::createDeadEnemy(sf::Vector2f position){
+    DeadEnemy deadEnemy(position);
+    deadEnemy.move({- 8 * SCALE, - 8 * SCALE});
+    deadEnemy.setTexture(rm.getTexture("sprites"));
+    deadEnemies.insertTail(deadEnemy);
+}
+
 void Game::createBackground(){
     background.setTexture(rm.getTexture("background"));
 }
@@ -42,20 +50,76 @@ void Game::loop(){
     while(elapsedTime >= TIMESTEP){
         elapsedTime -= TIMESTEP;
         updateLogic();
-        if(player.shootCooldown > 0) player.shootCooldown -= 1;
         render();
+        updateAnimations();
     }
 }
 
+//constatly checks, doesnt get cleaned, more consistent
+void Game::inputHandler(){
+    sf::Vector2f v = {0, 0};
+    if(sf::Keyboard::isKeyPressed(sf::Keyboard::A))
+        v.x += -PLAYER_SPEED;
+    if(sf::Keyboard::isKeyPressed(sf::Keyboard::D))
+        v.x += PLAYER_SPEED;
+    if(sf::Keyboard::isKeyPressed(sf::Keyboard::Space)){
+        if(player.shootCooldown == 0){
+            player.shootCooldown += SHOOT_COOLDOWN;
+            player.ShootBullet(rm.getTexture("sprites"));
+        }
+    }
+    player.setVelocity(v);
+}
+
+//only once per event, some events cycle
+void Game::eventHandler(){
+    sf::Event event;
+    while(window.pollEvent(event)){
+        if(event.type == sf::Event::Closed){
+            window.close();
+        }
+   }
+}
+
 void Game::updateLogic(){
+    if(player.shootCooldown > 0) player.shootCooldown -= 1;
     movePlayer();
     moveBullets();
+    decreaseDeadEnemyCounter();
     collisionHandler();
 }
 
+void Game::movePlayer(){
+    int playerOutOfBondsPos = player.getPosition().x + player.getHitbox().width + player.getVelocity().x;
+    int playerOutOfBondsNeg = player.getPosition().x + player.getVelocity().x;
+    if(playerOutOfBondsPos <= WINDOW_WIDTH && player.getVelocity().x > 0){
+        player.move(player.getVelocity());
+    } else if(playerOutOfBondsNeg > 0 && player.getVelocity().x < 0){
+        player.move(player.getVelocity());
+    }
+}
+
+void Game::moveBullets(){
+    while(player.bullets.hasNext()){
+        Bullet *bullet = &player.bullets.getNextNodeData();
+        bullet->move(bullet->getVelocity());
+    }
+}
+
+void Game::decreaseDeadEnemyCounter(){
+    while(deadEnemies.hasNext()){
+        DeadEnemy *deadEnemy = &deadEnemies.getNextNodeData();
+        deadEnemy->subtractToDeadCounter(1);
+        if(deadEnemy->getDeadCounter() <= 0){
+            deadEnemies.deleteNode(*deadEnemy);
+        }
+    }
+}
+
 void Game::collisionHandler(){
-    //player
+    //player hits enemy
     // enemy bullets
+    //player bullets
     bool enemyIsAlive = true;
     while(enemies.hasNext()){
         Enemy *enemy = &enemies.getNextNodeData();
@@ -72,7 +136,8 @@ void Game::collisionHandler(){
                     }
                     enemy->modifyHealth(-1);
                     if(enemy->getHealth() <= 0){
-                        //enemy animation
+                        createDeadEnemy(enemy->getPosition());
+                        //enemy death animation
                         enemies.deleteNode(*enemy);
                         enemyIsAlive = false;
                     }
@@ -98,58 +163,42 @@ bool Game::collisionChecker(sf::FloatRect hitbox1, sf::FloatRect hitbox2){
     return false;
 }
 
-void Game::movePlayer(){
-    int playerOutOfBondsPos = player.getPosition().x + player.getHitbox().width + player.getVelocity().x;
-    int playerOutOfBondsNeg = player.getPosition().x + player.getVelocity().x;
-    if(playerOutOfBondsPos <= WINDOW_WIDTH && player.getVelocity().x > 0){
-        player.setPosition(player.getPosition() + player.getVelocity());
-    } else if(playerOutOfBondsNeg > 0 && player.getVelocity().x < 0){
-        player.setPosition(player.getPosition() + player.getVelocity());
-    }
-}
 
-void Game::moveBullets(){
-    while(player.bullets.hasNext()){
-        Bullet *bullet = &player.bullets.getNextNodeData();
-        bullet->move(bullet->getVelocity());
-        //player.bullets.addVelToNode({0,-BULLET_SPEED});
-    }
-}
-
-//only once per event, some events cycle
-void Game::eventHandler(){
-    sf::Event event;
-    while(window.pollEvent(event)){
-        if(event.type == sf::Event::Closed){
-            window.close();
-        }
-   }
-}
-
-//constatly checks, doesnt get cleaned, more consistent
-void Game::inputHandler(){
-    sf::Vector2f v = {0, 0};
-    if(sf::Keyboard::isKeyPressed(sf::Keyboard::A))
-        v.x += -PLAYER_SPEED;
-    if(sf::Keyboard::isKeyPressed(sf::Keyboard::D))
-        v.x += PLAYER_SPEED;
-    if(sf::Keyboard::isKeyPressed(sf::Keyboard::Space)){
-        if(player.shootCooldown == 0){
-            player.shootCooldown += SHOOT_COOLDOWN;
-            player.ShootBullet(rm.getTexture("sprites"));
-        }
-    }
-    player.setVelocity(v);
-}
 
 void Game::render(){
     window.clear();
     renderBackground();
     renderEnemies();
+    renderDeadEnemies();
     window.draw(player);
     renderBullets();
     window.display();
 }
+
+void Game::updateAnimations(){
+    while(deadEnemies.hasNext()){
+        deadEnemyAnimation(deadEnemies.getNextNodeData());
+    }
+    //dead enemies
+    // set anicounter and aniMax
+}
+
+//change to all entities
+void Game::deadEnemyAnimation(DeadEnemy &deadEnemy){
+    if(deadEnemy.getAniTickCount() < ANIMATION_TICK){
+        deadEnemy.stepAniTickCount();
+    } else{
+        deadEnemy.resetAniTickCount();
+        deadEnemy.stepAniCount();
+        if(deadEnemy.getAniCount() >= deadEnemy.getAniIndex()){
+            deadEnemy.resetAniCount();
+        }
+        sf::IntRect entityRect = deadEnemy.getTextureRect();
+        entityRect.left = ((deadEnemy.getAniStartIndex().x)*16 + (deadEnemy.getAniCount()*entityRect.width));
+        deadEnemy.setTextureRect(entityRect);
+    }
+}
+
 
 void Game::renderBullets(){
     while(player.bullets.hasNext()){
@@ -160,6 +209,12 @@ void Game::renderBullets(){
 void Game::renderEnemies(){
     while(enemies.hasNext()){
         window.draw(enemies.getNextNodeData());
+    }
+}
+
+void Game::renderDeadEnemies(){
+    while(deadEnemies.hasNext()){
+        window.draw(deadEnemies.getNextNodeData());
     }
 }
 
