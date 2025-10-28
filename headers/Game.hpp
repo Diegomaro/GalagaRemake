@@ -24,13 +24,10 @@ class Game{
         void createDeadEnemy(sf::Vector2f position);
         void createBackground();
 
-        void movePlayer();
-        void moveBullets();
-        void moveEnemies();
+        void moveEntities();
 
-        void decreaseDeadEnemyCounter();
+        void updateDeadEnemies();
         void collisionHandler();
-        bool collisionChecker(sf::FloatRect entityHitbox1, sf::FloatRect entityHitbox2);
 
         void updateAnimations();
         void renderEntities();

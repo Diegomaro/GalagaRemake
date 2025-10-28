@@ -2,9 +2,8 @@
 #include <iostream>
 #include <cmath>
 
-using namespace GameConstants;
 
-Game::Game(): window(sf::VideoMode(WINDOW_WIDTH, WINDOW_HEIGHT), "Game"), elapsedTime(sf::Time::Zero), offset(0) {}
+Game::Game(): window(sf::VideoMode(Consts::Window::WIDTH, Consts::Window::HEIGHT), "Game"), elapsedTime(sf::Time::Zero), offset(0) {}
 
 void Game::start(){
     loadSprites();
@@ -33,7 +32,7 @@ void Game::createEnemy(sf::Vector2f position){
 
 void Game::createDeadEnemy(sf::Vector2f position){
     DeadEnemy deadEnemy(position);
-    deadEnemy.move({- 8 * SCALE, - 8 * SCALE});
+    deadEnemy.move({- 8 * Consts::Window::SCALE, - 8 * Consts::Window::SCALE});
     deadEnemy.setTexture(rm.getTexture("sprites"));
     deadEnemies.insertTail(deadEnemy);
 }
@@ -47,8 +46,8 @@ void Game::loop(){
     inputHandler();
     eventHandler();
     elapsedTime += clock.restart();
-    while(elapsedTime >= TIMESTEP){
-        elapsedTime -= TIMESTEP;
+    while(elapsedTime >= Consts::Timestep::FIXED){
+        elapsedTime -= Consts::Timestep::FIXED;
         updateLogic();
         render();
         updateAnimations();
@@ -58,12 +57,12 @@ void Game::loop(){
 void Game::inputHandler(){
     sf::Vector2f v = {0, 0};
     if(sf::Keyboard::isKeyPressed(sf::Keyboard::A))
-        v.x += -PLAYER_SPEED;
+        v.x += -Consts::Player::SPEED;
     if(sf::Keyboard::isKeyPressed(sf::Keyboard::D))
-        v.x += PLAYER_SPEED;
+        v.x += Consts::Player::SPEED;
     if(sf::Keyboard::isKeyPressed(sf::Keyboard::Space)){
         if(player.shootCooldown == 0){
-            player.shootCooldown += SHOOT_COOLDOWN;
+            player.shootCooldown += Consts::Player::SHOOT_COOLDOWN;
             player.ShootBullet(rm.getTexture("sprites"));
         }
     }
@@ -81,44 +80,31 @@ void Game::eventHandler(){
 
 void Game::updateLogic(){
     if(player.shootCooldown > 0) player.shootCooldown -= 1;
-    movePlayer();
-    moveBullets();
-    moveEnemies();
-    decreaseDeadEnemyCounter();
+    moveEntities();
+    updateDeadEnemies();
     collisionHandler();
 }
 
-void Game::movePlayer(){
-    int playerOutOfBondsPos = player.getPosition().x + player.getHitbox().width + player.getVelocity().x;
-    int playerOutOfBondsNeg = player.getPosition().x + player.getVelocity().x;
-    if(playerOutOfBondsPos <= WINDOW_WIDTH && player.getVelocity().x > 0){
-        player.move(player.getVelocity());
-    } else if(playerOutOfBondsNeg > 0 && player.getVelocity().x < 0){
-        player.move(player.getVelocity());
-    }
-}
-
-void Game::moveBullets(){
+void Game::moveEntities(){
+    //player
+    player.moveEntity();
+    //bullets
     while(player.bullets.hasNext()){
-        Bullet *bullet = &player.bullets.getNextNodeData();
-        bullet->move(bullet->getVelocity());
+        player.bullets.getNextNodeData().moveEntity();
     }
-}
-
-void Game::moveEnemies(){
+    //enemies
     Enemy *enemy = nullptr;
     enemy->stepOffset();
     while(enemies.hasNext()){
-        Enemy *enemy = &enemies.getNextNodeData();
-        enemy->moveEntity();
+        enemies.getNextNodeData().moveEntity();
     }
 }
 
-void Game::decreaseDeadEnemyCounter(){
+void Game::updateDeadEnemies(){
     while(deadEnemies.hasNext()){
         DeadEnemy *deadEnemy = &deadEnemies.getNextNodeData();
-        deadEnemy->subtractToDeadCounter(1);
-        if(deadEnemy->getDeadCounter() <= 0){
+        deadEnemy->reduceDeathCounter();
+        if(deadEnemy->getDeathCounter() <= 0){
             deadEnemies.deleteNode(*deadEnemy);
         }
     }
@@ -136,9 +122,7 @@ void Game::collisionHandler(){
         enemyIsAlive = true;
         while(player.bullets.hasNext() && enemyIsAlive){
             Bullet *bullet = &player.bullets.getNextNodeData();
-            sf::FloatRect bulletHitbox = bullet->getHitbox();
-            sf::FloatRect enemyHitbox = enemy->getHitbox();
-            if(collisionChecker(bulletHitbox, enemyHitbox)){
+            if(enemy->collisionCheck(bullet)){
                 std::cout << "collision detected!" << std::endl;
                     bullet->modifyHealth(-1);
                     if(bullet->getHealth() <= 0){
@@ -154,25 +138,6 @@ void Game::collisionHandler(){
         }
     }
 }
-
-bool Game::collisionChecker(sf::FloatRect hitbox1, sf::FloatRect hitbox2){
-    float hitbox1LowY = hitbox1.top;
-    float hitbox1HighY = hitbox1.top + hitbox1.height;
-    float hitbox2LowY = hitbox2.top;
-    float hitboxwHighY = hitbox2.top + hitbox2.height;
-    if(hitbox1LowY <= hitboxwHighY && hitbox1HighY >= hitbox2LowY){
-        float hitbox1LowX = hitbox1.left;
-        float hitbox1HighX = hitbox1.left + hitbox1.width;
-        float hitbox2LowX = hitbox2.left;
-        float hitboxwHighX = hitbox2.left + hitbox2.width;
-        if(hitbox1LowX <= hitboxwHighX && hitbox1HighX >= hitbox2LowX){
-            return true;
-        }
-    }
-    return false;
-}
-
-
 
 void Game::render(){
     window.clear();

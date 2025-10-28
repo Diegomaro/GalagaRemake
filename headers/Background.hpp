@@ -1,6 +1,6 @@
 #pragma once
 #include <SFML/Graphics.hpp>
-
+#include "GameConstants.hpp"
 class Background : public sf::Sprite{
     public:
         Background();

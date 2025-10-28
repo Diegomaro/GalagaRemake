@@ -2,6 +2,7 @@
 #include "Entity.hpp"
 #include "DoubleLinkedList.hpp"
 #include "Bullet.hpp"
+#include "GameConstants.hpp"
 
 class Player : public Entity {
     public:

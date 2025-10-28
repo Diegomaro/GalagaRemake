@@ -7,9 +7,10 @@ class DeadEnemy : public Entity {
     public:
         DeadEnemy(sf::Vector2f position);
         void moveEntity() override;
-        void subtractToDeadCounter(int subtract);
-        int getDeadCounter();
+        void reduceDeathCounter();
+        void subtractToDeathCounter(int subtract);
+        int getDeathCounter();
         bool operator == (DeadEnemy &deadEnemy);
     private:
-        int _deadCtr;
+        int _deathCounter;
 };

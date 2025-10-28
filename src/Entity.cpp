@@ -3,14 +3,29 @@
 Entity::Entity(): _sprite_dimensions(0, 0, 16, 16),
                 _hitbox(0, 0, 16*3, 16*3),
                 _velocity(0.f, 0.f),
-                _ticksPerFrame(5),
+                _health(0),
                 _aniStartIndex(0, 0),
-                _aniCtr(0),
-                _aniTotal(1),
+                _ticksPerFrame(5),
                 _aniTickCtr(0),
-                _health(0){
+                _aniTotal(1),
+                _aniCtr(0){
     setTextureRect(_sprite_dimensions);
     setScale({3.f, 3.f});
+}
+
+void Entity::setSpriteDimensions(sf::IntRect spriteDimensions){
+    _sprite_dimensions = spriteDimensions;
+    setTextureRect(_sprite_dimensions);
+}
+
+sf::IntRect Entity::getSpriteDimensions(){
+    return _sprite_dimensions;
+}
+
+sf::FloatRect Entity::getHitbox(){
+    _hitbox.left = getPosition().x;
+    _hitbox.top = getPosition().y;
+    return _hitbox;
 }
 
 void Entity::setVelocity(sf::Vector2f velocity){
@@ -18,12 +33,6 @@ void Entity::setVelocity(sf::Vector2f velocity){
 }
 sf::Vector2f Entity::getVelocity(){
     return _velocity;
-}
-
-sf::FloatRect Entity::getHitbox(){
-    _hitbox.left = getPosition().x;
-    _hitbox.top = getPosition().y;
-    return _hitbox;
 }
 
 void Entity::setHealt(int health){
@@ -38,28 +47,20 @@ int Entity::getHealth(){
     return _health;
 }
 
+void Entity::setAniStartIndex(sf::Vector2i aniStartIndex){
+    _aniStartIndex = aniStartIndex;
+}
+
+sf::Vector2i Entity::getAniStartIndex(){
+    return _aniStartIndex;
+}
+
 void Entity::setTickPerFrame(int ticksPerFrame){
     _ticksPerFrame = ticksPerFrame;
 }
 
 int Entity::getTicksPerFrame(){
     return _ticksPerFrame;
-}
-
-void Entity::stepAniCtr(){
-    _aniCtr += 1;
-}
-
-void Entity::resetAniCtr(){
-    _aniCtr = 0;
-}
-
-int Entity::getAniCtr(){
-    return _aniCtr;
-}
-
-int Entity::getAniTotal(){
-    return _aniTotal;
 }
 
 void Entity::stepAniTickCtr(){
@@ -74,12 +75,24 @@ int Entity::getAniTickCtr(){
     return _aniTickCtr;
 }
 
-void Entity::setAniStartIndex(sf::Vector2i aniStartIndex){
-    _aniStartIndex = aniStartIndex;
+void Entity::setAniTotal(int aniTotal){
+    _aniTotal = aniTotal;
 }
 
-sf::Vector2i Entity::getAniStartIndex(){
-    return _aniStartIndex;
+int Entity::getAniTotal(){
+    return _aniTotal;
+}
+
+void Entity::stepAniCtr(){
+    _aniCtr += 1;
+}
+
+void Entity::resetAniCtr(){
+    _aniCtr = 0;
+}
+
+int Entity::getAniCtr(){
+    return _aniCtr;
 }
 
 void Entity::updateAnimation(){
@@ -97,17 +110,21 @@ void Entity::updateAnimation(){
     }
 }
 
-void Entity::setSprite(int xPos, int yPos){
-    _sprite_dimensions.top = yPos * 16;
-    _sprite_dimensions.left = xPos * 16;
-    setTextureRect(_sprite_dimensions);
-}
-
-void Entity::setSpriteDimensions(sf::IntRect spriteDimensions){
-    _sprite_dimensions = spriteDimensions;
-    setTextureRect(_sprite_dimensions);
-}
-
-sf::IntRect Entity::getSpriteDimensions(){
-    return _sprite_dimensions;
+bool Entity::collisionCheck(Entity *entity2){
+    sf::FloatRect hitbox1 = getHitbox();
+    sf::FloatRect hitbox2 = entity2->getHitbox();
+    float hitbox1LowY = hitbox1.top;
+    float hitbox1HighY = hitbox1.top + hitbox1.height;
+    float hitbox2LowY = hitbox2.top;
+    float hitboxwHighY = hitbox2.top + hitbox2.height;
+    if(hitbox1LowY <= hitboxwHighY && hitbox1HighY >= hitbox2LowY){
+        float hitbox1LowX = hitbox1.left;
+        float hitbox1HighX = hitbox1.left + hitbox1.width;
+        float hitbox2LowX = hitbox2.left;
+        float hitboxwHighX = hitbox2.left + hitbox2.width;
+        if(hitbox1LowX <= hitboxwHighX && hitbox1HighX >= hitbox2LowX){
+            return true;
+        }
+    }
+    return false;
 }
