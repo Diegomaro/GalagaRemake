@@ -26,6 +26,8 @@ class Game{
 
         void moveEntities();
 
+        void updateShootColdown();
+        void updateEnemiesShoot();
         void updateDeadEnemies();
         void collisionHandler();
 

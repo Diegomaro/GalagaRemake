@@ -6,7 +6,7 @@ float Enemy::_offset = 0.f;
 float Enemy::_margin = 20.f;
 
 Enemy::Enemy(sf::Vector2f position): Entity(){
-    setSpriteDimensions(sf::IntRect(6*16,5*16,16,16));
+    setSpriteDimensions(sf::IntRect(6*16, 5*16, 16, 16));
     setPosition(position);
     _centralPosition = position;
     _health = 1;
@@ -14,6 +14,28 @@ Enemy::Enemy(sf::Vector2f position): Entity(){
     _aniTotal = 2;
     _aniStartIndex = {6, 5};
     _ticksPerFrame = 30;
+    _shootCooldown = 0;
+    _idle = true;
+    _canShoot = true;
+}
+
+
+void Enemy::resetShootCooldown(){
+    _shootCooldown = gm::Enemy::SHOOT_COOLDOWN;
+}
+
+void Enemy::stepShootCooldown(){
+    if(_shootCooldown <= 0){
+
+        _shootCooldown = 0;
+    } else{
+        _shootCooldown -= 1;
+
+    }
+}
+
+int Enemy::getShootCooldown(){
+    return _shootCooldown;
 }
 
 void Enemy::setCentralPosition(sf::Vector2f centralPosition){
@@ -30,6 +52,13 @@ void Enemy::setIdle(bool idle){
 
 bool Enemy::getIdle(){
     return _idle;
+}
+
+void Enemy::setCanShoot(bool canShoot){
+    _canShoot = canShoot;
+}
+bool Enemy::getCanShoot(){
+    return _canShoot;
 }
 
 void Enemy::stepOffset(){
@@ -56,12 +85,30 @@ float Enemy::getOffset(){
     return _offset;
 }
 
+bool Enemy::hasNextBullet(){
+    return bullets.hasNext();
+}
+
+Bullet &Enemy::getNextBullet(){
+    return bullets.getNextNodeData();
+}
+
+void Enemy::deleteBullet(Bullet bullet){
+    bullets.deleteNode(bullet);
+}
+
 void Enemy::moveEntity(){
     if(_idle){
         sf::Vector2f tmpPosition = getPosition();
         tmpPosition.x = _centralPosition.x + _offset;
         setPosition(tmpPosition);
     }
+}
+
+void Enemy::shoot(sf::Texture &texture){
+    Bullet bullet = Bullet(getPosition(), {0, 10.0f});
+    bullet.setTexture(texture);
+    bullets.insertTail(bullet);
 }
 
 bool Enemy::operator==(Enemy &enemy){

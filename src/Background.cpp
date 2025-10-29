@@ -1,10 +1,9 @@
 #include "Background.hpp"
 
 Background::Background(): _aniCtr(0), _aniSpeedCounter(0), _backgroundState(false), _pixelSpeed(2), _ticksPerFrame(2) {
-    setTextureRect({0, 288, 224, 288});
-    setScale({3, 3});
+    setTextureRect({0, 288, gm::Background::WIDTH, gm::Background::HEIGHT});
+    setScale({gm::Window::SCALE, gm::Window::SCALE});
     setPosition({0, 0});
-
 }
 
 void Background::changeFrame(){

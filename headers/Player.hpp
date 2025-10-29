@@ -7,9 +7,16 @@
 class Player : public Entity {
     public:
         Player();
+        void resetShootCooldown();
+        void stepShootCooldown();
+        int getShootCooldown();
+        bool hasNextBullet();
+        Bullet &getNextBullet();
+        void deleteBullet(Bullet bullet);
+
         void moveEntity() override;
-        void ShootBullet(sf::Texture &texture);
-        DoubleLinkedList<Bullet> bullets;
-        int shootCooldown;
+        void shoot(sf::Texture &texture);
     private:
+        int _shootCooldown;
+        DoubleLinkedList<Bullet> bullets;
 };

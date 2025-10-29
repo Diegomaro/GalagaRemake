@@ -10,7 +10,7 @@ Entity::Entity(): _sprite_dimensions(0, 0, 16, 16),
                 _aniTotal(1),
                 _aniCtr(0){
     setTextureRect(_sprite_dimensions);
-    setScale({3.f, 3.f});
+    setScale({gm::Window::SCALE, gm::Window::SCALE});
 }
 
 void Entity::setSpriteDimensions(sf::IntRect spriteDimensions){

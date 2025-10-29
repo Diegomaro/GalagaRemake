@@ -3,7 +3,7 @@
 #include <cmath>
 
 
-Game::Game(): window(sf::VideoMode(Consts::Window::WIDTH, Consts::Window::HEIGHT), "Game"), elapsedTime(sf::Time::Zero), offset(0) {}
+Game::Game(): window(sf::VideoMode(gm::Window::WIDTH, gm::Window::HEIGHT), "Game"), elapsedTime(sf::Time::Zero), offset(0) {}
 
 void Game::start(){
     loadSprites();
@@ -32,7 +32,7 @@ void Game::createEnemy(sf::Vector2f position){
 
 void Game::createDeadEnemy(sf::Vector2f position){
     DeadEnemy deadEnemy(position);
-    deadEnemy.move({- 8 * Consts::Window::SCALE, - 8 * Consts::Window::SCALE});
+    deadEnemy.move({- 8 * gm::Window::SCALE, - 8 * gm::Window::SCALE});
     deadEnemy.setTexture(rm.getTexture("sprites"));
     deadEnemies.insertTail(deadEnemy);
 }
@@ -43,27 +43,29 @@ void Game::createBackground(){
 
 
 void Game::loop(){
-    inputHandler();
     eventHandler();
+    inputHandler();
     elapsedTime += clock.restart();
-    while(elapsedTime >= Consts::Timestep::FIXED){
-        elapsedTime -= Consts::Timestep::FIXED;
+    bool updated = false;
+    while(elapsedTime >= gm::Timestep::FIXED){
+        elapsedTime -= gm::Timestep::FIXED;
         updateLogic();
-        render();
         updateAnimations();
+        updated = true;
     }
+    if(updated) render();
 }
 
 void Game::inputHandler(){
     sf::Vector2f v = {0, 0};
     if(sf::Keyboard::isKeyPressed(sf::Keyboard::A))
-        v.x += -Consts::Player::SPEED;
+        v.x += -gm::Player::SPEED;
     if(sf::Keyboard::isKeyPressed(sf::Keyboard::D))
-        v.x += Consts::Player::SPEED;
+        v.x += gm::Player::SPEED;
     if(sf::Keyboard::isKeyPressed(sf::Keyboard::Space)){
-        if(player.shootCooldown == 0){
-            player.shootCooldown += Consts::Player::SHOOT_COOLDOWN;
-            player.ShootBullet(rm.getTexture("sprites"));
+        if(player.getShootCooldown() == 0){
+            player.resetShootCooldown();
+            player.shoot(rm.getTexture("sprites"));
         }
     }
     player.setVelocity(v);
@@ -79,24 +81,57 @@ void Game::eventHandler(){
 }
 
 void Game::updateLogic(){
-    if(player.shootCooldown > 0) player.shootCooldown -= 1;
-    moveEntities();
     updateDeadEnemies();
+    updateShootColdown();
+    moveEntities();
+    updateEnemiesShoot();
     collisionHandler();
+}
+
+void Game::updateShootColdown(){
+    while(enemies.hasNext()){
+        enemies.getNextNodeData().stepShootCooldown();
+    }
+    player.stepShootCooldown();
 }
 
 void Game::moveEntities(){
     //player
     player.moveEntity();
     //bullets
-    while(player.bullets.hasNext()){
-        player.bullets.getNextNodeData().moveEntity();
+    while(player.hasNextBullet()){
+        Bullet * bullet = &player.getNextBullet();
+        bullet->moveEntity();
+        if(bullet->getPosition().y < gm::Bullet::UP_BORDER){
+            player.deleteBullet(*bullet);
+        }
     }
     //enemies
-    Enemy *enemy = nullptr;
-    enemy->stepOffset();
+    Enemy::stepOffset();
     while(enemies.hasNext()){
-        enemies.getNextNodeData().moveEntity();
+        Enemy &enemy = enemies.getNextNodeData();
+        while(enemy.hasNextBullet()){
+            Bullet *bullet = &enemy.getNextBullet();
+            bullet->moveEntity();
+            if(bullet->getPosition().y > gm::Bullet::DOWN_BORDER){
+                enemy.deleteBullet(*bullet);
+            }
+        }
+        enemy.moveEntity();
+    }
+}
+
+void Game::updateEnemiesShoot(){
+    while(enemies.hasNext()){
+        Enemy* enemy = &enemies.getNextNodeData();
+        if(enemy->getShootCooldown() == 0 && enemy->getCanShoot()){
+            enemy->resetShootCooldown();
+            int x = gm::randomInt(0,1);
+            if(x == 0){
+                std::cout << "shooting!" << std::endl;
+                enemy->shoot(rm.getTexture("sprites"));
+            }
+        }
     }
 }
 
@@ -114,19 +149,36 @@ void Game::collisionHandler(){
     //player hits enemy
 
     // enemy bullets
-
+    bool playerIsAlive = true;
+    while(enemies.hasNext()){
+        Enemy *enemy = &enemies.getNextNodeData();
+        playerIsAlive = true;
+        while(enemy->hasNextBullet() && playerIsAlive){
+            Bullet *bullet = &enemy->getNextBullet();
+            if(player.collisionCheck(bullet)){
+                bullet->modifyHealth(-1);
+                if(bullet->getHealth() <= 0){
+                    enemy->deleteBullet(*bullet);
+                }
+                player.modifyHealth(-1);
+                if(player.getHealth() <= 0){
+                    std::cout << "player killed!" << std::endl;
+                    playerIsAlive = false;
+                }
+            }
+        }
+    }
     //player bullets
     bool enemyIsAlive = true;
     while(enemies.hasNext()){
         Enemy *enemy = &enemies.getNextNodeData();
         enemyIsAlive = true;
-        while(player.bullets.hasNext() && enemyIsAlive){
-            Bullet *bullet = &player.bullets.getNextNodeData();
+        while(player.hasNextBullet() && enemyIsAlive){
+            Bullet *bullet = &player.getNextBullet();
             if(enemy->collisionCheck(bullet)){
-                std::cout << "collision detected!" << std::endl;
                     bullet->modifyHealth(-1);
                     if(bullet->getHealth() <= 0){
-                        player.bullets.deleteNode(*bullet);
+                        player.deleteBullet(*bullet);
                     }
                     enemy->modifyHealth(-1);
                     if(enemy->getHealth() <= 0){
@@ -148,11 +200,15 @@ void Game::render(){
 }
 
 void Game::renderEntities(){
-    while(player.bullets.hasNext()){
-        window.draw(player.bullets.getNextNodeData());
+    while(player.hasNextBullet()){
+        window.draw(player.getNextBullet());
     }
     while(enemies.hasNext()){
-        window.draw(enemies.getNextNodeData());
+        Enemy &enemy = enemies.getNextNodeData();
+        while(enemy.hasNextBullet()){
+            window.draw(enemy.getNextBullet());
+        }
+        window.draw(enemy);
     }
     while(deadEnemies.hasNext()){
         window.draw(deadEnemies.getNextNodeData());

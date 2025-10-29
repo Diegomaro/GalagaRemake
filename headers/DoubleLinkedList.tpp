@@ -150,6 +150,7 @@ bool DoubleLinkedList<T>::deleteNode(Node* node){
 	return true;
 }
 
+
 template <typename T>
 bool DoubleLinkedList<T>::hasNext(){
 	if(_curNode) return true;

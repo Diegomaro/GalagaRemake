@@ -1,6 +1,7 @@
 #pragma once
 #include <string>
 #include <SFML/Graphics.hpp>
+#include "GameConstants.hpp"
 
 class Entity: public sf::Sprite {
     public:
