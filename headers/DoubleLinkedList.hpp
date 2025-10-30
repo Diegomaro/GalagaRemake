@@ -1,6 +1,5 @@
 #pragma once
 #include <SFML/Graphics.hpp>
-#include <iostream>
 
 template <typename T>
 class DoubleLinkedList {
@@ -19,8 +18,9 @@ public:
 	bool insertTail(T nData);
 	bool deleteHead();
 	bool deleteTail();
-	bool deleteNode(T nData);
+	bool deleteNode(T *nData);
 	bool deleteNode(Node* node);
+	void resetNext();
 	bool hasNext();
 	T &getNextNodeData();
 	bool isEmpty();

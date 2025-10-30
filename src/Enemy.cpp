@@ -4,6 +4,8 @@
 bool Enemy::_directionOffset = true;
 float Enemy::_offset = 0.f;
 float Enemy::_margin = 20.f;
+DoubleLinkedList<Bullet> Enemy::bullets;
+
 
 Enemy::Enemy(sf::Vector2f position): Entity(){
     setSpriteDimensions(sf::IntRect(6*16, 5*16, 16, 16));
@@ -93,7 +95,7 @@ Bullet &Enemy::getNextBullet(){
     return bullets.getNextNodeData();
 }
 
-void Enemy::deleteBullet(Bullet bullet){
+void Enemy::deleteBullet(Bullet *bullet){
     bullets.deleteNode(bullet);
 }
 
@@ -105,8 +107,8 @@ void Enemy::moveEntity(){
     }
 }
 
-void Enemy::shoot(sf::Texture &texture){
-    Bullet bullet = Bullet(getPosition(), {0, 10.0f});
+void Enemy::shoot(sf::Texture &texture, sf::Vector2f velocity){
+    Bullet bullet = Bullet(getPosition(), velocity);
     bullet.setTexture(texture);
     bullets.insertTail(bullet);
 }

@@ -5,6 +5,12 @@
 
 Game::Game(): window(sf::VideoMode(gm::Window::WIDTH, gm::Window::HEIGHT), "Game"), elapsedTime(sf::Time::Zero), offset(0) {}
 
+Game::~Game(){
+    /*window.close();
+    deadEntities.clear();
+    enemies.clear();
+    player.clearBullets();*/
+}
 void Game::start(){
     loadSprites();
     createPlayer();
@@ -31,10 +37,17 @@ void Game::createEnemy(sf::Vector2f position){
 }
 
 void Game::createDeadEnemy(sf::Vector2f position){
-    DeadEnemy deadEnemy(position);
-    deadEnemy.move({- 8 * gm::Window::SCALE, - 8 * gm::Window::SCALE});
-    deadEnemy.setTexture(rm.getTexture("sprites"));
-    deadEnemies.insertTail(deadEnemy);
+    DeadEntity deadEntity(position, {15, 0, 32, 32}, 5, 5);
+    deadEntity.move({- 8 * gm::Window::SCALE, - 8 * gm::Window::SCALE});
+    deadEntity.setTexture(rm.getTexture("sprites"));
+    deadEntities.insertTail(deadEntity);
+}
+
+void Game::createDeadPlayer(sf::Vector2f position){
+    DeadEntity deadEntity(position, {7, 0, 32, 32}, 10, 4);
+    deadEntity.move({- 8 * gm::Window::SCALE, - 8 * gm::Window::SCALE});
+    deadEntity.setTexture(rm.getTexture("sprites"));
+    deadEntities.insertTail(deadEntity);
 }
 
 void Game::createBackground(){
@@ -57,6 +70,9 @@ void Game::loop(){
 }
 
 void Game::inputHandler(){
+    if(!player.getIsAlive()){
+        return;
+    }
     sf::Vector2f v = {0, 0};
     if(sf::Keyboard::isKeyPressed(sf::Keyboard::A))
         v.x += -gm::Player::SPEED;
@@ -65,7 +81,7 @@ void Game::inputHandler(){
     if(sf::Keyboard::isKeyPressed(sf::Keyboard::Space)){
         if(player.getShootCooldown() == 0){
             player.resetShootCooldown();
-            player.shoot(rm.getTexture("sprites"));
+            player.shoot(rm.getTexture("sprites"), {0, -gm::Bullet::SPEED});
         }
     }
     player.setVelocity(v);
@@ -81,11 +97,33 @@ void Game::eventHandler(){
 }
 
 void Game::updateLogic(){
-    updateDeadEnemies();
+    updatePlayer();
+    updateDeadEntities();
     updateShootColdown();
     moveEntities();
     updateEnemiesShoot();
     collisionHandler();
+}
+
+void Game::updatePlayer(){
+    if(!player.getIsAlive()){
+        player.stepRespawnCooldown();
+        if(player.getRespawnCooldown() <= 0){
+            player.setIsAlive(true);
+            player.setPosition({gm::Player::X_POS, gm::Player::Y_POS});
+            player.setHidden(false);
+        }
+    }
+}
+
+void Game::updateDeadEntities(){
+    while(deadEntities.hasNext()){
+        DeadEntity *deadEntity = &deadEntities.getNextNodeData();
+        deadEntity->reduceDeathCounter();
+        if(deadEntity->getDeathCounter() <= 0){
+            deadEntities.deleteNode(deadEntity);
+        }
+    }
 }
 
 void Game::updateShootColdown(){
@@ -103,21 +141,20 @@ void Game::moveEntities(){
         Bullet * bullet = &player.getNextBullet();
         bullet->moveEntity();
         if(bullet->getPosition().y < gm::Bullet::UP_BORDER){
-            player.deleteBullet(*bullet);
+            player.deleteBullet(bullet);
         }
     }
     //enemies
     Enemy::stepOffset();
-    while(enemies.hasNext()){
-        Enemy &enemy = enemies.getNextNodeData();
-        while(enemy.hasNextBullet()){
-            Bullet *bullet = &enemy.getNextBullet();
-            bullet->moveEntity();
-            if(bullet->getPosition().y > gm::Bullet::DOWN_BORDER){
-                enemy.deleteBullet(*bullet);
-            }
+    while(Enemy::hasNextBullet()){
+        Bullet *bullet = &Enemy::getNextBullet();
+        bullet->moveEntity();
+        if(bullet->getPosition().y > gm::Bullet::DOWN_BORDER){
+            Enemy::deleteBullet(bullet);
         }
-        enemy.moveEntity();
+    }
+    while(enemies.hasNext()){
+        enemies.getNextNodeData().moveEntity();
     }
 }
 
@@ -126,21 +163,11 @@ void Game::updateEnemiesShoot(){
         Enemy* enemy = &enemies.getNextNodeData();
         if(enemy->getShootCooldown() == 0 && enemy->getCanShoot()){
             enemy->resetShootCooldown();
-            int x = gm::randomInt(0,1);
+            int x = gm::randomInt(0,3); //fix this number
             if(x == 0){
                 std::cout << "shooting!" << std::endl;
-                enemy->shoot(rm.getTexture("sprites"));
+                enemy->shoot(rm.getTexture("sprites"), {0,gm::Bullet::SPEED});
             }
-        }
-    }
-}
-
-void Game::updateDeadEnemies(){
-    while(deadEnemies.hasNext()){
-        DeadEnemy *deadEnemy = &deadEnemies.getNextNodeData();
-        deadEnemy->reduceDeathCounter();
-        if(deadEnemy->getDeathCounter() <= 0){
-            deadEnemies.deleteNode(*deadEnemy);
         }
     }
 }
@@ -150,24 +177,31 @@ void Game::collisionHandler(){
 
     // enemy bullets
     bool playerIsAlive = true;
-    while(enemies.hasNext()){
-        Enemy *enemy = &enemies.getNextNodeData();
-        playerIsAlive = true;
-        while(enemy->hasNextBullet() && playerIsAlive){
-            Bullet *bullet = &enemy->getNextBullet();
-            if(player.collisionCheck(bullet)){
-                bullet->modifyHealth(-1);
-                if(bullet->getHealth() <= 0){
-                    enemy->deleteBullet(*bullet);
-                }
-                player.modifyHealth(-1);
-                if(player.getHealth() <= 0){
-                    std::cout << "player killed!" << std::endl;
-                    playerIsAlive = false;
-                }
+    while(Enemy::hasNextBullet() && playerIsAlive){
+        Bullet *bullet = &Enemy::getNextBullet();
+        if(player.collisionCheck(bullet)){
+            bullet->modifyHealth(-1);
+            if(bullet->getHealth() <= 0){
+                Enemy::deleteBullet(bullet);
+            }
+            player.modifyHealth(-1);
+            if(player.getHealth() <= 0){
+                createDeadPlayer(player.getPosition());
+                std::cout << "player killed!" << std::endl;
+                std::cout << "finished game!" << std::endl;
+                playerIsAlive = false;
+            } else{
+                player.setPosition({500,0});
+                player.setCanMove(false);
+                createDeadPlayer(player.getPosition());
+                player.setHidden(true);
+                player.resetRespawnCooldown();
+                player.setPosition({50000,0});
+                player.setIsAlive(false);
             }
         }
     }
+
     //player bullets
     bool enemyIsAlive = true;
     while(enemies.hasNext()){
@@ -178,12 +212,13 @@ void Game::collisionHandler(){
             if(enemy->collisionCheck(bullet)){
                     bullet->modifyHealth(-1);
                     if(bullet->getHealth() <= 0){
-                        player.deleteBullet(*bullet);
+                        player.deleteBullet(bullet);
                     }
                     enemy->modifyHealth(-1);
                     if(enemy->getHealth() <= 0){
                         createDeadEnemy(enemy->getPosition());
-                        enemies.deleteNode(*enemy);
+                        enemies.deleteNode(enemy);
+                        enemies.resetNext();
                         enemyIsAlive = false;
                     }
             }
@@ -195,7 +230,6 @@ void Game::render(){
     window.clear();
     window.draw(background);
     renderEntities();
-    window.draw(player);
     window.display();
 }
 
@@ -203,22 +237,29 @@ void Game::renderEntities(){
     while(player.hasNextBullet()){
         window.draw(player.getNextBullet());
     }
+
     while(enemies.hasNext()){
-        Enemy &enemy = enemies.getNextNodeData();
-        while(enemy.hasNextBullet()){
-            window.draw(enemy.getNextBullet());
-        }
-        window.draw(enemy);
+        window.draw(enemies.getNextNodeData());
     }
-    while(deadEnemies.hasNext()){
-        window.draw(deadEnemies.getNextNodeData());
+
+    while(Enemy::hasNextBullet()){
+        window.draw(Enemy::getNextBullet());
+    }
+
+    while(deadEntities.hasNext()){
+        window.draw(deadEntities.getNextNodeData());
+    }
+
+    if(!player.getHidden()){
+        window.draw(player);
     }
 }
 
 void Game::updateAnimations(){
-    while(deadEnemies.hasNext()){
-        deadEnemies.getNextNodeData().updateAnimation();
+    while(deadEntities.hasNext()){
+        deadEntities.getNextNodeData().updateAnimation();
     }
+
     while(enemies.hasNext()){
         enemies.getNextNodeData().updateAnimation();
     }

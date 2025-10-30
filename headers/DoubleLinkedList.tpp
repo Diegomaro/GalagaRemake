@@ -91,11 +91,11 @@ bool DoubleLinkedList<T>::deleteTail(){
 }
 
 template <typename T>
-bool DoubleLinkedList<T>::deleteNode(T nData){
+bool DoubleLinkedList<T>::deleteNode(T *nPointer){
 	if(!_head){
 		return false;
 	}
-	if((_head == _tail) && (_head->data == nData)){
+	if((_head == _tail) && (&_head->data == nPointer)){
 		delete _head;
 		_head = nullptr;
 		_tail = nullptr;
@@ -104,7 +104,7 @@ bool DoubleLinkedList<T>::deleteNode(T nData){
 	}
 
 	Node* tmp = _head;
-	if(_head->data == nData){
+	if(&_head->data == nPointer){
 		tmp = tmp->next;
 		if(_curNode == _head) _curNode = _head->next;
 		delete _head;
@@ -113,7 +113,7 @@ bool DoubleLinkedList<T>::deleteNode(T nData){
 		return true;
 	}
 	while(tmp->next != nullptr){
-		if(tmp->next->data == nData){
+		if(&tmp->next->data == nPointer){
 			Node* anchorNode = tmp->next->next;
 			if(_curNode == tmp->next) _curNode = tmp->next->next;
 			delete tmp->next;
@@ -148,6 +148,11 @@ bool DoubleLinkedList<T>::deleteNode(Node* node){
 	prevNode->next = nextNode;
 	nextNode->prev = prevNode;
 	return true;
+}
+
+template <typename T>
+void DoubleLinkedList<T>::resetNext(){
+	_curNode = _head;
 }
 
 

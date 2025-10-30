@@ -20,10 +20,14 @@ namespace gm {
     namespace Player {
         inline constexpr float SPEED = 6.0f;
         inline constexpr int SHOOT_COOLDOWN = 30;
+        inline constexpr int RESPAWN_COOLDOWN = 100;
+        inline constexpr float X_POS = (112-8)*3;
+        inline constexpr float Y_POS = 260*3;
     }
     namespace Bullet {
         inline constexpr float UP_BORDER = -5;
         inline constexpr float DOWN_BORDER = 869;
+        inline constexpr float SPEED = 10.0f;
     }
     namespace Enemy{
         enum class Points : int {
@@ -32,7 +36,7 @@ namespace gm {
             Three = 90
         };
         inline constexpr int SHOOT_COOLDOWN = 100;
-        inline constexpr int DEAD_ENEMY_COUNTER = 29;
+        //inline constexpr int DEAD_ENEMY_COUNTER = 29;
         /*30 = 5 anitick * 6 frames, but
         5 is the total animation frames, so the fifth frame should be extended and sixth skipped, so 30-1 */
     }

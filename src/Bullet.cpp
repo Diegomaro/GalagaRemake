@@ -1,8 +1,12 @@
 #include "Bullet.hpp"
 
-Bullet::Bullet(sf::Vector2f playerPosition, sf::Vector2f velocity): Entity() {
+Bullet::Bullet(sf::Vector2f entityPosition, sf::Vector2f velocity): Entity() {
     setSpriteDimensions(sf::IntRect(17*16,7*16,16,16));
-    setPosition({playerPosition.x, playerPosition.y - 8 * 3});
+    if(velocity.y > 0) {
+        setPosition({entityPosition.x, entityPosition.y + 8 * 3});
+    } else {
+        setPosition({entityPosition.x, entityPosition.y - 8 * 3});
+    }
     setVelocity(velocity);
     _hitbox.width = 3;
     _hitbox.height = 9;

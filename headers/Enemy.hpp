@@ -15,12 +15,12 @@ class Enemy: public Entity{
         bool getIdle();
         void setCanShoot(bool canShoot);
         bool getCanShoot();
-        bool hasNextBullet();
-        Bullet &getNextBullet();
-        void deleteBullet(Bullet bullet);
+        static bool hasNextBullet();
+        static Bullet &getNextBullet();
+        static void deleteBullet(Bullet *bullet);
 
         void moveEntity() override;
-        void shoot(sf::Texture &texture);
+        void shoot(sf::Texture &texture, sf::Vector2f velocity);
 
         bool operator == (Enemy &enemy);
 
@@ -30,10 +30,10 @@ class Enemy: public Entity{
     private:
         bool _idle;
         bool _canShoot;
-        DoubleLinkedList<Bullet> bullets;
         sf::Vector2f _centralPosition;
         int _shootCooldown;
 
+        static DoubleLinkedList<Bullet> bullets;
         static bool _directionOffset;
         static float _offset;
         static float _margin;

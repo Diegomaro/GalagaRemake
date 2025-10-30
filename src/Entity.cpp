@@ -1,6 +1,8 @@
 #include "Entity.hpp"
+#include <iostream>
 
-Entity::Entity(): _sprite_dimensions(0, 0, 16, 16),
+Entity::Entity():_hidden(false),
+                 _sprite_dimensions(0, 0, 16, 16),
                 _hitbox(0, 0, 16*3, 16*3),
                 _velocity(0.f, 0.f),
                 _health(0),
@@ -11,6 +13,14 @@ Entity::Entity(): _sprite_dimensions(0, 0, 16, 16),
                 _aniCtr(0){
     setTextureRect(_sprite_dimensions);
     setScale({gm::Window::SCALE, gm::Window::SCALE});
+}
+
+void Entity::setHidden(bool hidden){
+    _hidden = hidden;
+}
+
+bool Entity::getHidden(){
+    return _hidden;
 }
 
 void Entity::setSpriteDimensions(sf::IntRect spriteDimensions){
@@ -96,10 +106,12 @@ int Entity::getAniCtr(){
 }
 
 void Entity::updateAnimation(){
+    //std::cout << "aniTickCtr: " << getAniTickCtr() << std::endl;
     if(getAniTickCtr() < getTicksPerFrame()){
         stepAniTickCtr();
     } else{
         resetAniTickCtr();
+        stepAniTickCtr();
         stepAniCtr();
         if(getAniCtr() >= getAniTotal()){
             resetAniCtr();

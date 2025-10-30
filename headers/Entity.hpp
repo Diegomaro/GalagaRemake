@@ -6,6 +6,8 @@
 class Entity: public sf::Sprite {
     public:
     //setters & getters
+        void setHidden(bool hidden);
+        bool getHidden();
         void setSpriteDimensions(sf::IntRect spriteDimensions);
         sf::IntRect getSpriteDimensions();
         virtual sf::FloatRect getHitbox();
@@ -37,6 +39,7 @@ class Entity: public sf::Sprite {
         bool collisionCheck(Entity *entity2);
     protected:
         Entity();
+        bool _hidden;
         sf::IntRect _sprite_dimensions;
         sf::FloatRect _hitbox;
         sf::Vector2f _velocity;
