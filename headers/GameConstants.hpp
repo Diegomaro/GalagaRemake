@@ -15,7 +15,6 @@ namespace gm {
     namespace Sprite {
         inline constexpr unsigned int WIDTH = 16;
         inline constexpr unsigned int HEIGHT = 16;
-
     }
     namespace Player {
         inline constexpr float SPEED = 6.0f;
@@ -36,9 +35,6 @@ namespace gm {
             Three = 90
         };
         inline constexpr int SHOOT_COOLDOWN = 100;
-        //inline constexpr int DEAD_ENEMY_COUNTER = 29;
-        /*30 = 5 anitick * 6 frames, but
-        5 is the total animation frames, so the fifth frame should be extended and sixth skipped, so 30-1 */
     }
     namespace Timestep {
         inline const sf::Time FIXED = sf::milliseconds(1000.0f / 60.0f);

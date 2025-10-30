@@ -161,12 +161,17 @@ void Game::moveEntities(){
 void Game::updateEnemiesShoot(){
     while(enemies.hasNext()){
         Enemy* enemy = &enemies.getNextNodeData();
-        if(enemy->getShootCooldown() == 0 && enemy->getCanShoot()){
+        if(enemy->getShootCooldown() == 0 && enemy->getCanShoot() && player.getIsAlive()){
             enemy->resetShootCooldown();
             int x = gm::randomInt(0,3); //fix this number
             if(x == 0){
                 std::cout << "shooting!" << std::endl;
-                enemy->shoot(rm.getTexture("sprites"), {0,gm::Bullet::SPEED});
+                sf::Vector2f playerCenter = { (player.getPosition().x + player.getHitbox().width/2), player.getPosition().y + (player.getHitbox().height/2)};
+                sf::Vector2f enemyCenter = { (enemy->getPosition().x + enemy->getHitbox().width/2), enemy->getPosition().y + (enemy->getHitbox().height/2)};
+                sf::Vector2f distance = playerCenter - enemyCenter;
+                float fracDis = gm::Bullet::SPEED/distance.y;
+                float xSpeed = fracDis * distance.x;
+                enemy->shoot(rm.getTexture("sprites"), {xSpeed, gm::Bullet::SPEED});
             }
         }
     }
@@ -191,9 +196,8 @@ void Game::collisionHandler(){
                 std::cout << "finished game!" << std::endl;
                 playerIsAlive = false;
             } else{
-                player.setPosition({500,0});
-                player.setCanMove(false);
                 createDeadPlayer(player.getPosition());
+                player.setCanMove(false);
                 player.setHidden(true);
                 player.resetRespawnCooldown();
                 player.setPosition({50000,0});
