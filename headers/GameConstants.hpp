@@ -20,8 +20,8 @@ namespace gm {
         inline constexpr float SPEED = 6.0f;
         inline constexpr int SHOOT_COOLDOWN = 30;
         inline constexpr int RESPAWN_COOLDOWN = 100;
-        inline constexpr float X_POS = (112-8)*3;
-        inline constexpr float Y_POS = 260*3;
+        inline constexpr float X_POS = (112-8) * gm::Window::SCALE;
+        inline constexpr float Y_POS = 260 * gm::Window::SCALE;
     }
     namespace Bullet {
         inline constexpr float UP_BORDER = -5;
@@ -30,8 +30,8 @@ namespace gm {
     }
     namespace Enemy{
         inline constexpr int SHOOT_COOLDOWN = 100;
-        inline constexpr float ORIGIN_X = 32*3;
-        inline constexpr float ORIGIN_Y = 25*3;
+        inline constexpr float ORIGIN_X = 32*gm::Window::SCALE;
+        inline constexpr float ORIGIN_Y = 25*gm::Window::SCALE;
         enum class Type : int {
             null = 0,
             galaxian = 2,

@@ -3,7 +3,7 @@
 
 Entity::Entity():_hidden(false),
                  _sprite_dimensions(0, 0, 16, 16),
-                _hitbox(0, 0, 16*3, 16*3),
+                _hitbox(0, 0, 16*gm::Window::SCALE, 16*gm::Window::SCALE),
                 _velocity(0.f, 0.f),
                 _health(0),
                 _aniStartIndex(0, 0),
@@ -116,7 +116,7 @@ void Entity::updateAnimation(){
             resetAniCtr();
         }
         sf::IntRect entityRect = getTextureRect();
-        entityRect.left = ((getAniStartIndex().x)*16 + (getAniCtr()*entityRect.width));
+        entityRect.left = ((getAniStartIndex().x)*gm::Sprite::WIDTH + (getAniCtr()*entityRect.width));
         setTextureRect(entityRect);
     }
 }

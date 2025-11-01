@@ -18,8 +18,8 @@ void Bullet::moveEntity(){
 }
 
 sf::FloatRect Bullet::getHitbox(){
-    _hitbox.left = getPosition().x + 7*3;
-    _hitbox.top = getPosition().y + 5*3;
+    _hitbox.left = getPosition().x + 7 * gm::Window::SCALE;
+    _hitbox.top = getPosition().y + 5 * gm::Window::SCALE;
     return _hitbox;
 }
 
