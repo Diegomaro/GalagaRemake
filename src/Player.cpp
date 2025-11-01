@@ -7,6 +7,20 @@ Player::Player(): Entity(), _shootCooldown(0) {
     _isAlive = true;
 }
 
+void Player::reactivate(){
+    setIsAlive(true);
+    setPosition({gm::Player::X_POS, gm::Player::Y_POS});
+    setHidden(false);
+}
+
+void Player::deactivate(){
+    setCanMove(false);
+    setHidden(true);
+    resetRespawnCooldown();
+    setIsAlive(false);
+}
+
+
 void Player::setCanMove(bool canMove){
     _canMove = canMove;
 }

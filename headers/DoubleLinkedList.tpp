@@ -185,6 +185,9 @@ bool DoubleLinkedList<T>::clear(){
 	Node* index = _head;
 	while(index != nullptr){
 		index = index->next;
+		if constexpr (std::is_pointer_v<T>){
+			delete _head->data;
+		}
 		delete _head;
 		_head = index;
 	}

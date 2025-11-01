@@ -3,13 +3,13 @@
 
 bool Enemy::_directionOffset = true;
 float Enemy::_offset = 0.f;
-float Enemy::_margin = 20.f;
+float Enemy::_margin = 30.f;
 DoubleLinkedList<Bullet> Enemy::bullets;
 
-
-Enemy::Enemy(sf::Vector2f position): Entity(){
-    setSpriteDimensions(sf::IntRect(6*16, 5*16, 16, 16));
+Enemy::Enemy(sf::Vector2f position, int type): Entity(){
     setPosition(position);
+    _type = type;
+    setEnemySprite();
     _centralPosition = position;
     _health = 1;
     _idle = true;
@@ -21,6 +21,27 @@ Enemy::Enemy(sf::Vector2f position): Entity(){
     _canShoot = true;
 }
 
+void Enemy::setEnemySprite(){
+    switch(_type){
+        case 2:{
+            setSpriteDimensions(sf::IntRect(6*16, 3*16, 16, 16));
+        }break;
+        case 4:{
+            setSpriteDimensions(sf::IntRect(6*16, 4*16, 16, 16));
+        }break;
+        case 5:{
+            setSpriteDimensions(sf::IntRect(6*16, 5*16, 16, 16));
+        }break;
+    }
+}
+
+void Enemy::setType(int type){
+    _type = type;
+}
+
+int Enemy::getType(){
+    return _type;
+}
 
 void Enemy::resetShootCooldown(){
     _shootCooldown = gm::Enemy::SHOOT_COOLDOWN;

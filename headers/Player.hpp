@@ -7,6 +7,8 @@
 class Player : public Entity {
     public:
         Player();
+        void reactivate();
+        void deactivate();
         void setCanMove(bool canMove);
         bool getCanMove();
         void setIsAlive(bool isAlive);
@@ -31,6 +33,4 @@ class Player : public Entity {
         int _shootCooldown;
         int _respawnCooldown;
         DoubleLinkedList<Bullet> bullets;
-        int ibufbuwiq;
-        int djdsadsa;
 };

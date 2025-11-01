@@ -3,20 +3,15 @@
 #include <cmath>
 
 
-Game::Game(): window(sf::VideoMode(gm::Window::WIDTH, gm::Window::HEIGHT), "Game"), elapsedTime(sf::Time::Zero), offset(0) {}
+Game::Game(): window(sf::VideoMode(gm::Window::WIDTH, gm::Window::HEIGHT), "Game"), elapsedTime(sf::Time::Zero), offset(0), points(0) {}
 
-Game::~Game(){
-    /*window.close();
-    deadEntities.clear();
-    enemies.clear();
-    player.clearBullets();*/
-}
 void Game::start(){
     loadSprites();
     createPlayer();
     createBackground();
-    createEnemy({20*3, 6*3});
-    createEnemy({40*3, 0*3});
+    createEnemy({20*3, 6*3}, 5);
+    createEnemy({40*3, 0*3}, 5);
+    createStage();
     window.setVisible(true);
     while(window.isOpen()) loop();
 }
@@ -30,8 +25,8 @@ void Game::createPlayer(){
     player.setTexture(rm.getTexture("sprites"));
 }
 
-void Game::createEnemy(sf::Vector2f position){
-    Enemy enemy(position);
+void Game::createEnemy(sf::Vector2f position, int type){
+    Enemy enemy(position, type);
     enemy.setTexture(rm.getTexture("sprites"));
     enemies.insertTail(enemy);
 }
@@ -54,6 +49,19 @@ void Game::createBackground(){
     background.setTexture(rm.getTexture("background"));
 }
 
+void Game::createStage(){
+    Stage *stage = stageManager.getCurrentStage();
+    while(stage->waves.hasNext()){
+        Wave *wave = stage->waves.getNextNodeData();
+        while(wave->rows.hasNext()){
+            Row *row = wave->rows.getNextNodeData();
+            while(row->enemies.hasNext()){
+                Enemy *enemy = row->enemies.getNextNodeData();
+                enemy->setTexture(rm.getTexture("sprites"));
+            }
+        }
+    }
+}
 
 void Game::loop(){
     eventHandler();
@@ -70,21 +78,20 @@ void Game::loop(){
 }
 
 void Game::inputHandler(){
-    if(!player.getIsAlive()){
-        return;
-    }
-    sf::Vector2f v = {0, 0};
-    if(sf::Keyboard::isKeyPressed(sf::Keyboard::A))
-        v.x += -gm::Player::SPEED;
-    if(sf::Keyboard::isKeyPressed(sf::Keyboard::D))
-        v.x += gm::Player::SPEED;
-    if(sf::Keyboard::isKeyPressed(sf::Keyboard::Space)){
-        if(player.getShootCooldown() == 0){
-            player.resetShootCooldown();
-            player.shoot(rm.getTexture("sprites"), {0, -gm::Bullet::SPEED});
+    if(player.getIsAlive()){
+        sf::Vector2f v = {0, 0};
+        if(sf::Keyboard::isKeyPressed(sf::Keyboard::A))
+            v.x += -gm::Player::SPEED;
+        if(sf::Keyboard::isKeyPressed(sf::Keyboard::D))
+            v.x += gm::Player::SPEED;
+        if(sf::Keyboard::isKeyPressed(sf::Keyboard::Space)){
+            if(player.getShootCooldown() == 0){
+                player.resetShootCooldown();
+                player.shoot(rm.getTexture("sprites"), {0, -gm::Bullet::SPEED});
+            }
         }
+        player.setVelocity(v);
     }
-    player.setVelocity(v);
 }
 
 void Game::eventHandler(){
@@ -109,9 +116,7 @@ void Game::updatePlayer(){
     if(!player.getIsAlive()){
         player.stepRespawnCooldown();
         if(player.getRespawnCooldown() <= 0){
-            player.setIsAlive(true);
-            player.setPosition({gm::Player::X_POS, gm::Player::Y_POS});
-            player.setHidden(false);
+            player.reactivate();
         }
     }
 }
@@ -136,7 +141,7 @@ void Game::updateShootColdown(){
 void Game::moveEntities(){
     //player
     player.moveEntity();
-    //bullets
+    //player bullets
     while(player.hasNextBullet()){
         Bullet * bullet = &player.getNextBullet();
         bullet->moveEntity();
@@ -145,6 +150,20 @@ void Game::moveEntities(){
         }
     }
     //enemies
+    while(enemies.hasNext()){
+        enemies.getNextNodeData().moveEntity();
+    }
+    Stage *stage = stageManager.getCurrentStage();
+    while(stage->waves.hasNext()){
+        Wave *wave = stage->waves.getNextNodeData();
+        while(wave->rows.hasNext()){
+            Row *row = wave->rows.getNextNodeData();
+            while(row->enemies.hasNext()){
+                row->enemies.getNextNodeData()->moveEntity();
+            }
+        }
+    }
+    //enemy bullets
     Enemy::stepOffset();
     while(Enemy::hasNextBullet()){
         Bullet *bullet = &Enemy::getNextBullet();
@@ -152,9 +171,6 @@ void Game::moveEntities(){
         if(bullet->getPosition().y > gm::Bullet::DOWN_BORDER){
             Enemy::deleteBullet(bullet);
         }
-    }
-    while(enemies.hasNext()){
-        enemies.getNextNodeData().moveEntity();
     }
 }
 
@@ -181,8 +197,7 @@ void Game::collisionHandler(){
     //player hits enemy
 
     // enemy bullets
-    bool playerIsAlive = true;
-    while(Enemy::hasNextBullet() && playerIsAlive){
+    while(Enemy::hasNextBullet() && player.getIsAlive()){
         Bullet *bullet = &Enemy::getNextBullet();
         if(player.collisionCheck(bullet)){
             bullet->modifyHealth(-1);
@@ -192,20 +207,16 @@ void Game::collisionHandler(){
             player.modifyHealth(-1);
             if(player.getHealth() <= 0){
                 createDeadPlayer(player.getPosition());
-                std::cout << "player killed!" << std::endl;
+                player.deactivate();
                 std::cout << "finished game!" << std::endl;
-                playerIsAlive = false;
             } else{
+                std::cout << "player killed!" << std::endl;
+                //addPoints();
                 createDeadPlayer(player.getPosition());
-                player.setCanMove(false);
-                player.setHidden(true);
-                player.resetRespawnCooldown();
-                player.setPosition({50000,0});
-                player.setIsAlive(false);
+                player.deactivate();
             }
         }
     }
-
     //player bullets
     bool enemyIsAlive = true;
     while(enemies.hasNext()){
@@ -257,15 +268,35 @@ void Game::renderEntities(){
     if(!player.getHidden()){
         window.draw(player);
     }
+
+    Stage *stage = stageManager.getCurrentStage();
+    while(stage->waves.hasNext()){
+        Wave *wave = stage->waves.getNextNodeData();
+        while(wave->rows.hasNext()){
+            Row *row = wave->rows.getNextNodeData();
+            while(row->enemies.hasNext()){
+                window.draw(*row->enemies.getNextNodeData());
+            }
+        }
+    }
 }
 
 void Game::updateAnimations(){
     while(deadEntities.hasNext()){
         deadEntities.getNextNodeData().updateAnimation();
     }
-
     while(enemies.hasNext()){
         enemies.getNextNodeData().updateAnimation();
+    }
+    Stage *stage = stageManager.getCurrentStage();
+    while(stage->waves.hasNext()){
+        Wave *wave = stage->waves.getNextNodeData();
+        while(wave->rows.hasNext()){
+            Row *row = wave->rows.getNextNodeData();
+            while(row->enemies.hasNext()){
+                row->enemies.getNextNodeData()->updateAnimation();
+            }
+        }
     }
     background.changeFrame();
 }

@@ -7,11 +7,11 @@
 #include "Background.hpp"
 #include "GameConstants.hpp"
 #include "DoubleLinkedList.hpp"
+#include "StageManager.hpp"
 
 class Game{
     public:
         Game();
-        ~Game();
         void start();
         void loop();
         void updateLogic();
@@ -21,10 +21,11 @@ class Game{
     private:
         void loadSprites();
         void createPlayer();
-        void createEnemy(sf::Vector2f position);
+        void createEnemy(sf::Vector2f position, int type);
         void createDeadPlayer(sf::Vector2f position);
         void createDeadEnemy(sf::Vector2f position);
         void createBackground();
+        void createStage();
 
         void moveEntities();
 
@@ -34,8 +35,8 @@ class Game{
         void updateDeadEntities();
         void collisionHandler();
 
-        void updateAnimations();
         void renderEntities();
+        void updateAnimations();
     private:
         sf::RenderWindow window;
         sf::Time elapsedTime;
@@ -49,4 +50,6 @@ class Game{
         Background background;
         DoubleLinkedList<Enemy> enemies;
         DoubleLinkedList<DeadEntity> deadEntities;
+        StageManager stageManager;
+        int points;
 };

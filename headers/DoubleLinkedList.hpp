@@ -12,6 +12,7 @@ public:
 		Node();
 		Node(T nData);
 	};
+
 	DoubleLinkedList();
 	~DoubleLinkedList();
 	bool insertHead(T nData);

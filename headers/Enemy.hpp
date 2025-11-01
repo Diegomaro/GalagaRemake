@@ -5,7 +5,10 @@
 
 class Enemy: public Entity{
     public:
-        Enemy(sf::Vector2f position);
+        Enemy(sf::Vector2f position, int type);
+        void setEnemySprite();
+        void setType(int type);
+        int getType();
         void setCentralPosition(sf::Vector2f centraPosition);
         sf::Vector2f getCentralPosition();
         void resetShootCooldown();
@@ -28,6 +31,7 @@ class Enemy: public Entity{
         static void resetOffset();
         static float getOffset();
     private:
+        int _type;
         bool _idle;
         bool _canShoot;
         sf::Vector2f _centralPosition;

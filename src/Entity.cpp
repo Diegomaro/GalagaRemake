@@ -106,7 +106,6 @@ int Entity::getAniCtr(){
 }
 
 void Entity::updateAnimation(){
-    //std::cout << "aniTickCtr: " << getAniTickCtr() << std::endl;
     if(getAniTickCtr() < getTicksPerFrame()){
         stepAniTickCtr();
     } else{
