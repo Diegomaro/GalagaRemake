@@ -3,14 +3,18 @@
 #include <cmath>
 
 
-Game::Game(): window(sf::VideoMode(gm::Window::WIDTH, gm::Window::HEIGHT), "Game"), elapsedTime(sf::Time::Zero), offset(0), points(0) {}
+Game::Game():
+    window(sf::VideoMode(gm::Window::WIDTH, gm::Window::HEIGHT), "Game"),
+    elapsedTime(sf::Time::Zero),
+    offset(0),
+    points(0) {}
 
 void Game::start(){
     loadSprites();
     createPlayer();
     createBackground();
-    createEnemy({20*3, 6*3}, 5);
-    createEnemy({40*3, 0*3}, 5);
+    createEnemy({20 * gm::Window::SCALE, 6 * gm::Window::SCALE}, 5);
+    createEnemy({40 * gm::Window::SCALE, 0 * gm::Window::SCALE}, 5);
     createStage();
     window.setVisible(true);
     while(window.isOpen()) loop();
@@ -58,9 +62,12 @@ void Game::createStage(){
             while(row->enemies.hasNext()){
                 Enemy *enemy = row->enemies.getNextNodeData();
                 enemy->setTexture(rm.getTexture("sprites"));
+                Enemy storedEnemy = *enemy;
+                enemies.insertTail(storedEnemy);
             }
         }
     }
+    stageManager.destroyStage();
 }
 
 void Game::loop(){
@@ -153,6 +160,7 @@ void Game::moveEntities(){
     while(enemies.hasNext()){
         enemies.getNextNodeData().moveEntity();
     }
+    /*
     Stage *stage = stageManager.getCurrentStage();
     while(stage->waves.hasNext()){
         Wave *wave = stage->waves.getNextNodeData();
@@ -163,6 +171,7 @@ void Game::moveEntities(){
             }
         }
     }
+    */
     //enemy bullets
     Enemy::stepOffset();
     while(Enemy::hasNextBullet()){
@@ -268,7 +277,7 @@ void Game::renderEntities(){
     if(!player.getHidden()){
         window.draw(player);
     }
-
+    /*
     Stage *stage = stageManager.getCurrentStage();
     while(stage->waves.hasNext()){
         Wave *wave = stage->waves.getNextNodeData();
@@ -279,6 +288,7 @@ void Game::renderEntities(){
             }
         }
     }
+    */
 }
 
 void Game::updateAnimations(){
@@ -288,6 +298,7 @@ void Game::updateAnimations(){
     while(enemies.hasNext()){
         enemies.getNextNodeData().updateAnimation();
     }
+    /*
     Stage *stage = stageManager.getCurrentStage();
     while(stage->waves.hasNext()){
         Wave *wave = stage->waves.getNextNodeData();
@@ -297,6 +308,6 @@ void Game::updateAnimations(){
                 row->enemies.getNextNodeData()->updateAnimation();
             }
         }
-    }
+    }*/
     background.changeFrame();
 }

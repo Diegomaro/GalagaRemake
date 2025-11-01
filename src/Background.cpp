@@ -11,6 +11,7 @@ Background::Background(): _backgroundState(false),
 }
 
 void Background::changeFrame(){
+    using namespace gm::Window;
     if(_aniSpeedCounter < _ticksPerFrame){
         _aniSpeedCounter += 1;
         return;
@@ -22,18 +23,18 @@ void Background::changeFrame(){
     if(_aniCtr > 5){
         _aniCtr = 0;
         if(_backgroundState == false){
-            backgroundCopy.top += 576;
+            backgroundCopy.top += 192 * SCALE;
             _backgroundState = true;
         } else if(_backgroundState == true){
-            backgroundCopy.top -= 576;
+            backgroundCopy.top -= 192 * SCALE;
             _backgroundState = false;
         }
     }
     if(_backgroundState == false){
-        if(backgroundCopy.top - _pixelSpeed < 0) backgroundCopy.top += 288;
+        if(backgroundCopy.top - _pixelSpeed < 0) backgroundCopy.top += 96 * SCALE;
         backgroundCopy.top -= _pixelSpeed;
     } else{
-        if(backgroundCopy.top - _pixelSpeed < 576) backgroundCopy.top += 288;
+        if(backgroundCopy.top - _pixelSpeed < 192 * SCALE) backgroundCopy.top += 96 * SCALE;
         backgroundCopy.top -= _pixelSpeed;
     }
     _aniCtr += 1;
