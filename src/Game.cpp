@@ -2,7 +2,6 @@
 #include <iostream>
 #include <cmath>
 
-
 Game::Game():
     window(sf::VideoMode(gm::Window::WIDTH, gm::Window::HEIGHT), "Game"),
     elapsedTime(sf::Time::Zero),
@@ -176,21 +175,24 @@ void Game::moveEntities(){
 }
 
 void Game::updateEnemiesShoot(){
+    sf::Vector2f playerCenter = { (player.getPosition().x + player.getHitbox().width/2), player.getPosition().y + (player.getHitbox().height/2)};
     while(enemies.hasNext()){
         Enemy* enemy = &enemies.getNextNodeData();
         if(enemy->getShootCooldown() == 0 && enemy->getCanShoot() && player.getIsAlive()){
             enemy->resetShootCooldown();
-            int x = gm::randomInt(0,3); //fix this number
+            int x = gm::randomInt(0,2); //fix this number
             if(x == 0){
-                /*
-                std::cout << "shooting!" << std::endl;
-                sf::Vector2f playerCenter = { (player.getPosition().x + player.getHitbox().width/2), player.getPosition().y + (player.getHitbox().height/2)};
                 sf::Vector2f enemyCenter = { (enemy->getPosition().x + enemy->getHitbox().width/2), enemy->getPosition().y + (enemy->getHitbox().height/2)};
                 sf::Vector2f distance = playerCenter - enemyCenter;
-                float fracDis = gm::Bullet::SPEED/distance.y;
+                float fracDis = 0;
+                if(distance.y != 0){
+                    fracDis = gm::Bullet::SPEED/distance.y;
+                }
+                if(distance.x != 0){
+                    distance.x = distance.x * 0.60; //fix this number
+                }
                 float xSpeed = fracDis * distance.x;
                 enemy->shoot(rm.getTexture("sprites"), {xSpeed, gm::Bullet::SPEED});
-                */
             }
         }
     }
