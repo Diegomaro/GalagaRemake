@@ -105,9 +105,10 @@ int Entity::getAniCtr(){
     return _aniCtr;
 }
 
-void Entity::updateAnimation(){
+bool Entity::updateAnimation(){
     if(getAniTickCtr() < getTicksPerFrame()){
         stepAniTickCtr();
+        return false;
     } else{
         resetAniTickCtr();
         stepAniTickCtr();
@@ -118,6 +119,7 @@ void Entity::updateAnimation(){
         sf::IntRect entityRect = getTextureRect();
         entityRect.left = ((getAniStartIndex().x)*gm::Sprite::WIDTH + (getAniCtr()*entityRect.width));
         setTextureRect(entityRect);
+        return true;
     }
 }
 

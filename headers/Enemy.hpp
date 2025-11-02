@@ -22,6 +22,9 @@ class Enemy: public Entity{
         static Bullet &getNextBullet();
         static void deleteBullet(Bullet *bullet);
 
+        static void stepMoveCtr();
+        static bool canMoveInPosition();
+
         void moveEntity() override;
         void shoot(sf::Texture &texture, sf::Vector2f velocity);
 
@@ -37,6 +40,8 @@ class Enemy: public Entity{
         sf::Vector2f _centralPosition;
         int _shootCooldown;
 
+        static int _moveCtr;
+        static int _moveTotal;
         static DoubleLinkedList<Bullet> bullets;
         static bool _directionOffset;
         static float _offset;

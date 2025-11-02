@@ -6,6 +6,9 @@ float Enemy::_offset = 0.f;
 float Enemy::_margin = 30.f;
 DoubleLinkedList<Bullet> Enemy::bullets;
 
+int Enemy::_moveCtr = 0;
+int Enemy::_moveTotal = 5;
+
 Enemy::Enemy(sf::Vector2f position, int type): Entity(){
     setPosition(position);
     _type = type;
@@ -49,11 +52,9 @@ void Enemy::resetShootCooldown(){
 
 void Enemy::stepShootCooldown(){
     if(_shootCooldown <= 0){
-
         _shootCooldown = 0;
     } else{
         _shootCooldown -= 1;
-
     }
 }
 
@@ -86,13 +87,13 @@ bool Enemy::getCanShoot(){
 
 void Enemy::stepOffset(){
     if(_directionOffset){
-        _offset += 1.f;
+        _offset += 3.f;
         if(_offset >= _margin){
             _directionOffset = false;
             _offset = _margin;
         }
     } else{
-        _offset -= 1.f;
+        _offset -= 3.f;
         if(_offset <= -_margin){
             _directionOffset = true;
             _offset = -_margin;
@@ -118,6 +119,18 @@ Bullet &Enemy::getNextBullet(){
 
 void Enemy::deleteBullet(Bullet *bullet){
     bullets.deleteNode(bullet);
+}
+
+void Enemy::stepMoveCtr(){
+    _moveCtr+=1;
+}
+
+bool Enemy::canMoveInPosition(){
+    if(_moveCtr >= _moveTotal){
+        _moveCtr = 0;
+        return true;
+    }
+    return false;
 }
 
 void Enemy::moveEntity(){

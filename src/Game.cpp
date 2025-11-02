@@ -157,23 +157,15 @@ void Game::moveEntities(){
         }
     }
     //enemies
-    while(enemies.hasNext()){
-        enemies.getNextNodeData().moveEntity();
-    }
-    /*
-    Stage *stage = stageManager.getCurrentStage();
-    while(stage->waves.hasNext()){
-        Wave *wave = stage->waves.getNextNodeData();
-        while(wave->rows.hasNext()){
-            Row *row = wave->rows.getNextNodeData();
-            while(row->enemies.hasNext()){
-                row->enemies.getNextNodeData()->moveEntity();
-            }
+    Enemy::stepMoveCtr();
+    if(Enemy::canMoveInPosition()){
+        Enemy::stepOffset();
+        while(enemies.hasNext()){
+            enemies.getNextNodeData().moveEntity();
         }
     }
-    */
     //enemy bullets
-    Enemy::stepOffset();
+
     while(Enemy::hasNextBullet()){
         Bullet *bullet = &Enemy::getNextBullet();
         bullet->moveEntity();
@@ -190,6 +182,7 @@ void Game::updateEnemiesShoot(){
             enemy->resetShootCooldown();
             int x = gm::randomInt(0,3); //fix this number
             if(x == 0){
+                /*
                 std::cout << "shooting!" << std::endl;
                 sf::Vector2f playerCenter = { (player.getPosition().x + player.getHitbox().width/2), player.getPosition().y + (player.getHitbox().height/2)};
                 sf::Vector2f enemyCenter = { (enemy->getPosition().x + enemy->getHitbox().width/2), enemy->getPosition().y + (enemy->getHitbox().height/2)};
@@ -197,6 +190,7 @@ void Game::updateEnemiesShoot(){
                 float fracDis = gm::Bullet::SPEED/distance.y;
                 float xSpeed = fracDis * distance.x;
                 enemy->shoot(rm.getTexture("sprites"), {xSpeed, gm::Bullet::SPEED});
+                */
             }
         }
     }
@@ -277,18 +271,6 @@ void Game::renderEntities(){
     if(!player.getHidden()){
         window.draw(player);
     }
-    /*
-    Stage *stage = stageManager.getCurrentStage();
-    while(stage->waves.hasNext()){
-        Wave *wave = stage->waves.getNextNodeData();
-        while(wave->rows.hasNext()){
-            Row *row = wave->rows.getNextNodeData();
-            while(row->enemies.hasNext()){
-                window.draw(*row->enemies.getNextNodeData());
-            }
-        }
-    }
-    */
 }
 
 void Game::updateAnimations(){
@@ -296,18 +278,7 @@ void Game::updateAnimations(){
         deadEntities.getNextNodeData().updateAnimation();
     }
     while(enemies.hasNext()){
-        enemies.getNextNodeData().updateAnimation();
+        if(enemies.getNextNodeData().updateAnimation());
     }
-    /*
-    Stage *stage = stageManager.getCurrentStage();
-    while(stage->waves.hasNext()){
-        Wave *wave = stage->waves.getNextNodeData();
-        while(wave->rows.hasNext()){
-            Row *row = wave->rows.getNextNodeData();
-            while(row->enemies.hasNext()){
-                row->enemies.getNextNodeData()->updateAnimation();
-            }
-        }
-    }*/
     background.changeFrame();
 }

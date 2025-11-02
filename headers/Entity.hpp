@@ -34,7 +34,7 @@ class Entity: public sf::Sprite {
         int getAniCtr();
         //move and update entity
         virtual void moveEntity() = 0;
-        void updateAnimation();
+        bool updateAnimation();
         bool collisionCheck(Entity *entity2);
     protected:
         Entity();

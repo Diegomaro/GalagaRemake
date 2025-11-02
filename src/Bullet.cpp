@@ -8,8 +8,8 @@ Bullet::Bullet(sf::Vector2f entityPosition, sf::Vector2f velocity): Entity() {
         setPosition({entityPosition.x, entityPosition.y - 8 * 3});
     }
     setVelocity(velocity);
-    _hitbox.width = 3;
-    _hitbox.height = 9;
+    _hitbox.width = 1 * gm::Window::SCALE;
+    _hitbox.height = 3 * gm::Window::SCALE;
     _health = 1;
 }
 
