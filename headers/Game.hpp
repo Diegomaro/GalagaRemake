@@ -21,7 +21,8 @@ class Game{
     private:
         void loadSprites();
         void createPlayer();
-        void createEnemy(sf::Vector2f position, int type);
+        bool createNextEnemy();
+        //void createEnemy(sf::Vector2f position, int type);
         void createDeadPlayer(sf::Vector2f position);
         void createDeadEnemy(sf::Vector2f position);
         void createBackground();
@@ -39,17 +40,19 @@ class Game{
         void updateAnimations();
     private:
         sf::RenderWindow window;
-        sf::Time elapsedTime;
         sf::Clock clock;
-
-        int offset;
+        sf::Time elapsedTime;
 
         ResourceManager rm;
+        int points;
 
         Player player;
-        Background background;
         DoubleLinkedList<Enemy> enemies;
         DoubleLinkedList<DeadEntity> deadEntities;
         StageManager stageManager;
-        int points;
+        Stage *stage;
+        Wave *wave;
+        Row *row;
+
+        Background background;
 };

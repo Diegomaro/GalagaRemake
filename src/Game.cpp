@@ -5,18 +5,21 @@
 Game::Game():
     window(sf::VideoMode(gm::Window::WIDTH, gm::Window::HEIGHT), "Game"),
     elapsedTime(sf::Time::Zero),
-    offset(0),
-    points(0) {}
+    points(0),
+    stage(nullptr),
+    wave(nullptr),
+    row(nullptr) {}
 
 void Game::start(){
     loadSprites();
     createPlayer();
     createBackground();
-    createEnemy({20 * gm::Window::SCALE, 6 * gm::Window::SCALE}, 5);
-    createEnemy({40 * gm::Window::SCALE, 0 * gm::Window::SCALE}, 5);
     createStage();
     window.setVisible(true);
-    while(window.isOpen()) loop();
+
+    while(window.isOpen()){
+        loop();
+    }
 }
 
 void Game::loadSprites(){
@@ -28,11 +31,34 @@ void Game::createPlayer(){
     player.setTexture(rm.getTexture("sprites"));
 }
 
+bool Game::createNextEnemy(){
+    if(row->enemies.hasNext()){
+        Enemy *nextEnemy = row->enemies.getNextNodeData();
+        nextEnemy->setTexture(rm.getTexture("sprites"));
+        enemies.insertTail(*nextEnemy);
+    } else{
+        if(wave->rows.hasNext()){
+            row = wave->rows.getNextNodeData();
+            createNextEnemy();
+        } else{
+            if(stage->waves.hasNext()){
+                wave = stage->waves.getNextNodeData();
+                createNextEnemy();
+            } else{
+                return false;
+                std::cout << "Finished!" << std::endl;
+            }
+        }
+
+    }
+    return true;
+}
+/*
 void Game::createEnemy(sf::Vector2f position, int type){
     Enemy enemy(position, type);
     enemy.setTexture(rm.getTexture("sprites"));
     enemies.insertTail(enemy);
-}
+}*/
 
 void Game::createDeadEnemy(sf::Vector2f position){
     DeadEntity deadEntity(position, {15, 0, 32, 32}, 5, 5);
@@ -53,20 +79,13 @@ void Game::createBackground(){
 }
 
 void Game::createStage(){
-    Stage *stage = stageManager.getCurrentStage();
-    while(stage->waves.hasNext()){
-        Wave *wave = stage->waves.getNextNodeData();
-        while(wave->rows.hasNext()){
-            Row *row = wave->rows.getNextNodeData();
-            while(row->enemies.hasNext()){
-                Enemy *enemy = row->enemies.getNextNodeData();
-                enemy->setTexture(rm.getTexture("sprites"));
-                Enemy storedEnemy = *enemy;
-                enemies.insertTail(storedEnemy);
-            }
+    stage = stageManager.getCurrentStage();
+    if(stage->waves.hasNext()){
+        wave = stage->waves.getNextNodeData();
+        if(wave->rows.hasNext()){
+            row = wave->rows.getNextNodeData();
         }
     }
-    stageManager.destroyStage();
 }
 
 void Game::loop(){
@@ -135,12 +154,14 @@ void Game::updateDeadEntities(){
             deadEntities.deleteNode(deadEntity);
         }
     }
+    deadEntities.resetNext();
 }
 
 void Game::updateShootColdown(){
     while(enemies.hasNext()){
         enemies.getNextNodeData().stepShootCooldown();
     }
+    enemies.resetNext();
     player.stepShootCooldown();
 }
 
@@ -155,6 +176,7 @@ void Game::moveEntities(){
             player.deleteBullet(bullet);
         }
     }
+    player.resetNextBullet();
     //enemies
     Enemy::stepMoveCtr();
     if(Enemy::canMoveInPosition()){
@@ -163,6 +185,7 @@ void Game::moveEntities(){
             enemies.getNextNodeData().moveEntity();
         }
     }
+    enemies.resetNext();
     //enemy bullets
 
     while(Enemy::hasNextBullet()){
@@ -172,6 +195,7 @@ void Game::moveEntities(){
             Enemy::deleteBullet(bullet);
         }
     }
+    Enemy::resetNextBullet();
 }
 
 void Game::updateEnemiesShoot(){
@@ -196,6 +220,7 @@ void Game::updateEnemiesShoot(){
             }
         }
     }
+    enemies.resetNext();
 }
 
 void Game::collisionHandler(){
@@ -222,6 +247,7 @@ void Game::collisionHandler(){
             }
         }
     }
+    Enemy::resetNextBullet();
     //player bullets
     bool enemyIsAlive = true;
     while(enemies.hasNext()){
@@ -243,7 +269,9 @@ void Game::collisionHandler(){
                     }
             }
         }
+        player.resetNextBullet();
     }
+    enemies.resetNext();
 }
 
 void Game::render(){
@@ -257,18 +285,22 @@ void Game::renderEntities(){
     while(player.hasNextBullet()){
         window.draw(player.getNextBullet());
     }
+    player.resetNextBullet();
 
     while(enemies.hasNext()){
         window.draw(enemies.getNextNodeData());
     }
+    enemies.resetNext();
 
     while(Enemy::hasNextBullet()){
         window.draw(Enemy::getNextBullet());
     }
+    Enemy::resetNextBullet();
 
     while(deadEntities.hasNext()){
         window.draw(deadEntities.getNextNodeData());
     }
+    deadEntities.resetNext();
 
     if(!player.getHidden()){
         window.draw(player);
@@ -279,8 +311,10 @@ void Game::updateAnimations(){
     while(deadEntities.hasNext()){
         deadEntities.getNextNodeData().updateAnimation();
     }
+    deadEntities.resetNext();
     while(enemies.hasNext()){
         if(enemies.getNextNodeData().updateAnimation());
     }
+    enemies.resetNext();
     background.changeFrame();
 }

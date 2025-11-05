@@ -68,6 +68,10 @@ int Player::getRespawnCooldown(){
     return _respawnCooldown;
 }
 
+void Player::resetNextBullet(){
+    bullets.resetNext();
+}
+
 bool Player::hasNextBullet(){
     return bullets.hasNext();
 }

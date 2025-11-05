@@ -19,6 +19,7 @@ class Player : public Entity {
         void resetRespawnCooldown();
         void stepRespawnCooldown();
         int getRespawnCooldown();
+        void resetNextBullet();
         bool hasNextBullet();
         Bullet &getNextBullet();
         void deleteBullet(Bullet *bullet);

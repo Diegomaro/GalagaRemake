@@ -109,6 +109,11 @@ float Enemy::getOffset(){
     return _offset;
 }
 
+
+void Enemy::resetNextBullet(){
+    bullets.resetNext();
+}
+
 bool Enemy::hasNextBullet(){
     return bullets.hasNext();
 }

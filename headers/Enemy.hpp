@@ -18,6 +18,8 @@ class Enemy: public Entity{
         bool getIdle();
         void setCanShoot(bool canShoot);
         bool getCanShoot();
+
+        static void resetNextBullet();
         static bool hasNextBullet();
         static Bullet &getNextBullet();
         static void deleteBullet(Bullet *bullet);
