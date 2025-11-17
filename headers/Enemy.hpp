@@ -5,7 +5,7 @@
 
 class Enemy: public Entity{
     public:
-        Enemy(sf::Vector2f position, int type);
+        Enemy(sf::Vector2f finalPosition, int type, const sf::Vector2f patternPositions[], const int durationTicks[], const int patternState[], const int totalPositions);
         void setEnemySprite();
         void setType(int type);
         int getType();
@@ -38,14 +38,37 @@ class Enemy: public Entity{
     private:
         int _type;
         bool _idle;
+        bool _movingPattern;
+
+
         bool _canShoot;
-        sf::Vector2f _centralPosition;
         int _shootCooldown;
+        static DoubleLinkedList<Bullet> bullets;
+
+
+        sf::Vector2f _centralPosition;
+        sf::Vector2f _startingPosition;
 
         static int _moveCtr;
         static int _moveTotal;
-        static DoubleLinkedList<Bullet> bullets;
+
         static bool _directionOffset;
         static float _offset;
         static float _margin;
+
+        sf::Vector2f _patternPositions[100];
+        int _durationTicks[100];
+        int _patternState[100];
+        int _ctrPattern;
+
+
+        sf::Vector2f _curVelocity;
+        sf::Vector2f *_velocities;
+
+        int _trajectoryDurationCtr;
+        int _trajectoryDurationTotal;
+
+        void setPositionsROM(const sf::Vector2f patternPositions[], int count);
+        void setDurationROM(const int durationTicks[], int count);
+        void setStateROM(const int patternState[], int count);
 };

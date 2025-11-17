@@ -10,6 +10,7 @@ bool ResourceManager::loadTexture(std::string name, std::string fileName){
         std::cout << "Could not find file!" << std::endl;
         return false;
     }
+    texture.setSmooth(false);
     textureMap.insert({name, texture});
     return true;
 }

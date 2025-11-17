@@ -9,19 +9,29 @@ DoubleLinkedList<Bullet> Enemy::bullets;
 int Enemy::_moveCtr = 0;
 int Enemy::_moveTotal = 5;
 
-Enemy::Enemy(sf::Vector2f position, int type): Entity(){
-    setPosition(position);
+Enemy::Enemy(sf::Vector2f finalPosition, int type, const sf::Vector2f patternPositions[], const int durationTicks[], const int patternState[], const int totalPositions): Entity(){
+    setPosition(finalPosition);
+    //setPosition(patternPositions[0]);
     _type = type;
     setEnemySprite();
-    _centralPosition = position;
+    _centralPosition = finalPosition;
+    _startingPosition = patternPositions[0];
     _health = 1;
-    _idle = true;
+    _idle = false;
+    _movingPattern = true;
     _aniTotal = 2;
     _aniStartIndex = {6, 5};
     _ticksPerFrame = 30;
     _shootCooldown = 0;
-    _idle = true;
     _canShoot = true;
+    _trajectoryDurationCtr = 0;
+    _trajectoryDurationTotal = 0;
+    _ctrPattern = 0;
+    _curVelocity = {0,0};
+    _velocities = nullptr;
+    setPositionsROM(patternPositions, totalPositions);
+    setDurationROM(durationTicks, totalPositions);
+    setStateROM(patternState, totalPositions);
 }
 
 void Enemy::setEnemySprite(){
@@ -127,7 +137,7 @@ void Enemy::deleteBullet(Bullet *bullet){
 }
 
 void Enemy::stepMoveCtr(){
-    _moveCtr+=1;
+    _moveCtr += 1;
 }
 
 bool Enemy::canMoveInPosition(){
@@ -143,6 +153,65 @@ void Enemy::moveEntity(){
         sf::Vector2f tmpPosition = getPosition();
         tmpPosition.x = _centralPosition.x + _offset;
         setPosition(tmpPosition);
+        return;
+    }
+    //second state to reach idle position
+    else if(_movingPattern){
+        sf::Vector2f tmpPosition = getPosition();
+        sf::Vector2f curVelocity = {0,0};
+        if(_trajectoryDurationCtr < _trajectoryDurationTotal){
+            curVelocity = _velocities[_trajectoryDurationCtr];
+            _trajectoryDurationCtr += 1;
+        } else{
+            _ctrPattern += 1;
+            if(_ctrPattern >= 100  || (_ctrPattern > 1 && _durationTicks[_ctrPattern] == 0)){
+                _movingPattern = false;
+                _idle = true;
+                return;
+            }
+            sf::Vector2f destinationPosition = _patternPositions[_ctrPattern];
+            _trajectoryDurationTotal = _durationTicks[_ctrPattern];
+            _trajectoryDurationCtr = 0;
+            int pattern = _patternState[_ctrPattern];
+            sf::Vector2f differentialPosition = destinationPosition - tmpPosition;
+
+            if(_velocities){
+                delete _velocities;
+                _velocities = nullptr;
+            }
+            _velocities = new(std::nothrow) sf::Vector2f[_trajectoryDurationTotal];
+            switch(pattern){
+                case 0:{ // linear
+                    sf::Vector2f velocityDiff = {differentialPosition.x / _trajectoryDurationTotal, differentialPosition.y / _trajectoryDurationTotal};
+                    for(int i = 0; i < _trajectoryDurationTotal; i++){
+                        _velocities[i] = velocityDiff;
+                    }
+                }break;
+                case 1:{ // inwards
+                    sf::Vector2f velocityDiff = {differentialPosition.x / _trajectoryDurationTotal, differentialPosition.y / _trajectoryDurationTotal};
+                    for(int i = 0; i < _trajectoryDurationTotal; i++){
+                        _velocities[i] = velocityDiff;
+                    }
+                }break;
+                case 2:{ //outwards
+                    sf::Vector2f velocityDiff = {differentialPosition.x / _trajectoryDurationTotal, differentialPosition.y / _trajectoryDurationTotal};
+                    for(int i = 0; i < _trajectoryDurationTotal; i++){
+                        _velocities[i] = velocityDiff;
+                    }
+                }break;
+            }
+            if(_ctrPattern != 99 && _patternPositions[_ctrPattern].x ==  _patternPositions[_ctrPattern+1].x && _patternPositions[_ctrPattern].y == _patternPositions[_ctrPattern+1].y){
+                _movingPattern = false;
+                _idle = true;
+            }
+            moveEntity();
+
+        }
+        _curVelocity = curVelocity;
+        tmpPosition.x += std::round(curVelocity.x);
+        tmpPosition.y += std::round(curVelocity.y);
+        setPosition(tmpPosition);
+        //move(curVelocity);
     }
 }
 
@@ -150,6 +219,39 @@ void Enemy::shoot(sf::Texture &texture, sf::Vector2f velocity){
     Bullet bullet = Bullet(getPosition(), velocity);
     bullet.setTexture(texture);
     bullets.insertTail(bullet);
+}
+
+void Enemy::setPositionsROM(const sf::Vector2f patternPositions[], int count){
+    for(int i = 0; i < count; i++){
+        _patternPositions[i] = patternPositions[i];
+    }
+    if(count < 100){
+        for(int i = count; i < 100; ++i){
+            _patternPositions[i] = {0,0};
+        }
+    }
+}
+
+void Enemy::setDurationROM(const int durationTicks[], int count){
+    for(int i = 0; i < count; i++){
+        _durationTicks[i] = durationTicks[i];
+    }
+    if(count < 100){
+        for(int i = count; i < 100; ++i){
+            _durationTicks[i] = 0;
+        }
+    }
+}
+
+void Enemy::setStateROM(const int patternState[], int count){
+    for(int i = 0; i < count; i++){
+        _patternState[i] = patternState[i];
+    }
+    if(count < 100){
+        for(int i = count; i < 100; ++i){
+            _patternState[i] = 0;
+        }
+    }
 }
 
 bool Enemy::operator==(Enemy &enemy){

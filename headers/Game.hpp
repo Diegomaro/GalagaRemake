@@ -22,6 +22,7 @@ class Game{
         void loadSprites();
         void createPlayer();
         bool createNextEnemy();
+        bool createNextRow();
         //void createEnemy(sf::Vector2f position, int type);
         void createDeadPlayer(sf::Vector2f position);
         void createDeadEnemy(sf::Vector2f position);

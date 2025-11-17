@@ -16,7 +16,7 @@ void Game::start(){
     createBackground();
     createStage();
     window.setVisible(true);
-
+    createNextRow();
     while(window.isOpen()){
         loop();
     }
@@ -53,6 +53,33 @@ bool Game::createNextEnemy(){
     }
     return true;
 }
+
+bool Game::createNextRow(){
+    bool rowCreated = false;
+    while(row->enemies.hasNext()){
+        rowCreated = true;
+        Enemy *nextEnemy = row->enemies.getNextNodeData();
+        nextEnemy->setTexture(rm.getTexture("sprites"));
+        enemies.insertTail(*nextEnemy);
+    }
+    if(!rowCreated){
+        if(wave->rows.hasNext()){
+            row = wave->rows.getNextNodeData();
+            createNextRow();
+        } else{
+            if(stage->waves.hasNext()){
+                wave = stage->waves.getNextNodeData();
+                createNextRow();
+            } else{
+                return false;
+                std::cout << "Finished!" << std::endl;
+            }
+        }
+
+    }
+    return true;
+}
+
 /*
 void Game::createEnemy(sf::Vector2f position, int type){
     Enemy enemy(position, type);
@@ -92,14 +119,12 @@ void Game::loop(){
     eventHandler();
     inputHandler();
     elapsedTime += clock.restart();
-    bool updated = false;
     while(elapsedTime >= gm::Timestep::FIXED){
         elapsedTime -= gm::Timestep::FIXED;
         updateLogic();
         updateAnimations();
-        updated = true;
+        render();
     }
-    if(updated) render();
 }
 
 void Game::inputHandler(){
@@ -181,9 +206,9 @@ void Game::moveEntities(){
     Enemy::stepMoveCtr();
     if(Enemy::canMoveInPosition()){
         Enemy::stepOffset();
-        while(enemies.hasNext()){
-            enemies.getNextNodeData().moveEntity();
-        }
+    }
+    while(enemies.hasNext()){
+        enemies.getNextNodeData().moveEntity();
     }
     enemies.resetNext();
     //enemy bullets

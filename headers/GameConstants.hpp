@@ -9,12 +9,12 @@ namespace gm {
         inline constexpr float SCALE = 3.f;
     }
     namespace Background {
-        inline constexpr unsigned int WIDTH = 224;
-        inline constexpr unsigned int HEIGHT = 288;
+        inline constexpr int WIDTH = 224;
+        inline constexpr int HEIGHT = 288;
     }
     namespace Sprite {
-        inline constexpr unsigned int WIDTH = 16;
-        inline constexpr unsigned int HEIGHT = 16;
+        inline constexpr int WIDTH = 16;
+        inline constexpr int HEIGHT = 16;
     }
     namespace Player {
         inline constexpr float SPEED = 6.0f;
@@ -30,8 +30,8 @@ namespace gm {
     }
     namespace Enemy{
         inline constexpr int SHOOT_COOLDOWN = 100;
-        inline constexpr float ORIGIN_X = 32*gm::Window::SCALE;
-        inline constexpr float ORIGIN_Y = 25*gm::Window::SCALE;
+        inline constexpr float ORIGIN_X = 32 * gm::Window::SCALE;
+        inline constexpr float ORIGIN_Y = 3 * gm::Window::SCALE;
         enum class Type : int {
             null = 0,
             galaxian = 2,
@@ -53,14 +53,24 @@ namespace gm {
                 namespace Row_1{
                     inline constexpr bool MIXED = false;
                     int constexpr TYPE[1] = {4};
-                    int constexpr MIN_AMOUNT = 4;
+                    int constexpr MIN_ENEMY_AMOUNT = 4;
+                    int constexpr TOTAL_POSITIONS = 1;
+                    int constexpr GRID_POS_X[TOTAL_POSITIONS] = {3};
+                    int constexpr GRID_POS_Y[TOTAL_POSITIONS] = {-3};
+                    int constexpr DURATION_TICKS[TOTAL_POSITIONS] = {0};
+                    int constexpr TRAJECTORY[TOTAL_POSITIONS] = {0};
                     int constexpr GRID_FINAL_POS_X[4] = {4, 4, 5 ,5};
                     int constexpr GRID_FINAL_POS_Y[4] = {2, 3, 2, 3};
                 }
                 namespace Row_2{
                     inline constexpr bool MIXED = false;
                     int constexpr TYPE[1] = {5};
-                    int constexpr MIN_AMOUNT = 4;
+                    int constexpr MIN_ENEMY_AMOUNT = 4;
+                    int constexpr TOTAL_POSITIONS = 1;
+                    int constexpr GRID_POS_X[TOTAL_POSITIONS] = {3};
+                    int constexpr GRID_POS_Y[TOTAL_POSITIONS] = {-3};
+                    int constexpr DURATION_TICKS[TOTAL_POSITIONS] = {0};
+                    int constexpr TRAJECTORY[TOTAL_POSITIONS] = {0};
                     int constexpr GRID_FINAL_POS_X[4] = {4, 4, 5, 5};
                     int constexpr GRID_FINAL_POS_Y[4] = {4, 5, 4, 5};
                 }
@@ -70,14 +80,24 @@ namespace gm {
                 namespace Row_1{
                     inline constexpr bool MIXED = false;
                     int constexpr TYPE[1] = {2};
-                    int constexpr MIN_AMOUNT = 4;
+                    int constexpr MIN_ENEMY_AMOUNT = 4;
+                    int constexpr TOTAL_POSITIONS = 1;
+                    int constexpr GRID_POS_X[TOTAL_POSITIONS] = {3};
+                    int constexpr GRID_POS_Y[TOTAL_POSITIONS] = {-3};
+                    int constexpr DURATION_TICKS[TOTAL_POSITIONS] = {0};
+                    int constexpr TRAJECTORY[TOTAL_POSITIONS] = {0};
                     int constexpr GRID_FINAL_POS_X[4] = {3, 4, 5, 6};
                     int constexpr GRID_FINAL_POS_Y[4] = {1, 1, 1 ,1};
                 }
                 namespace Row_2{
                     inline constexpr bool MIXED = false;
                     int constexpr TYPE[1] = {4};
-                    int constexpr MIN_AMOUNT = 4;
+                    int constexpr MIN_ENEMY_AMOUNT = 4;
+                    int constexpr TOTAL_POSITIONS = 1;
+                    int constexpr GRID_POS_X[TOTAL_POSITIONS] = {3};
+                    int constexpr GRID_POS_Y[TOTAL_POSITIONS] = {-3};
+                    int constexpr DURATION_TICKS[TOTAL_POSITIONS] = {0};
+                    int constexpr TRAJECTORY[TOTAL_POSITIONS] = {0};
                     int constexpr GRID_FINAL_POS_X[4] = {3, 3, 6, 6};
                     int constexpr GRID_FINAL_POS_Y[4] = {2, 3, 2, 3};
                 }
@@ -87,14 +107,24 @@ namespace gm {
                 namespace Row_1{
                     inline constexpr bool MIXED = false;
                     int constexpr TYPE[1] = {4};
-                    int constexpr MIN_AMOUNT = 4;
+                    int constexpr MIN_ENEMY_AMOUNT = 4;
+                    int constexpr TOTAL_POSITIONS = 1;
+                    int constexpr GRID_POS_X[TOTAL_POSITIONS] = {3};
+                    int constexpr GRID_POS_Y[TOTAL_POSITIONS] = {-3};
+                    int constexpr DURATION_TICKS[TOTAL_POSITIONS] = {0};
+                    int constexpr TRAJECTORY[TOTAL_POSITIONS] = {0};
                     int constexpr GRID_FINAL_POS_X[4] = {1, 1, 2, 2};
                     int constexpr GRID_FINAL_POS_Y[4] = {2, 3, 2, 3};
                 }
                 namespace Row_2{
                     inline constexpr bool MIXED = false;
                     int constexpr TYPE[1] = {4};
-                    int constexpr MIN_AMOUNT = 4;
+                    int constexpr MIN_ENEMY_AMOUNT = 4;
+                    int constexpr TOTAL_POSITIONS = 1;
+                    int constexpr GRID_POS_X[TOTAL_POSITIONS] = {3};
+                    int constexpr GRID_POS_Y[TOTAL_POSITIONS] = {-3};
+                    int constexpr DURATION_TICKS[TOTAL_POSITIONS] = {0};
+                    int constexpr TRAJECTORY[TOTAL_POSITIONS] = {0};
                     int constexpr GRID_FINAL_POS_X[4] = {7, 7, 8, 8};
                     int constexpr GRID_FINAL_POS_Y[4] = {2, 3, 2, 3};
                 }
@@ -104,14 +134,24 @@ namespace gm {
                 namespace Row_1{
                     inline constexpr bool MIXED = false;
                     int constexpr TYPE[1] = {5};
-                    int constexpr MIN_AMOUNT = 4;
+                    int constexpr MIN_ENEMY_AMOUNT = 4;
+                    int constexpr TOTAL_POSITIONS = 1;
+                    int constexpr GRID_POS_X[TOTAL_POSITIONS] = {3};
+                    int constexpr GRID_POS_Y[TOTAL_POSITIONS] = {-3};
+                    int constexpr DURATION_TICKS[TOTAL_POSITIONS] = {0};
+                    int constexpr TRAJECTORY[TOTAL_POSITIONS] = {0};
                     int constexpr GRID_FINAL_POS_X[4] = {2, 2, 3, 3};
                     int constexpr GRID_FINAL_POS_Y[4] = {4, 5, 4, 5};
                 }
                 namespace Row_2{
                     inline constexpr bool MIXED = false;
                     int constexpr TYPE[1] = {5};
-                    int constexpr MIN_AMOUNT = 4;
+                    int constexpr MIN_ENEMY_AMOUNT = 4;
+                    int constexpr TOTAL_POSITIONS = 1;
+                    int constexpr GRID_POS_X[TOTAL_POSITIONS] = {3};
+                    int constexpr GRID_POS_Y[TOTAL_POSITIONS] = {-3};
+                    int constexpr DURATION_TICKS[TOTAL_POSITIONS] = {0};
+                    int constexpr TRAJECTORY[TOTAL_POSITIONS] = {0};
                     int constexpr GRID_FINAL_POS_X[4] = {6, 6, 7, 7};
                     int constexpr GRID_FINAL_POS_Y[4] = {4, 5, 4, 5};
                 }
@@ -121,14 +161,24 @@ namespace gm {
                 namespace Row_1{
                     inline constexpr bool MIXED = false;
                     int constexpr TYPE[1] = {5};
-                    int constexpr MIN_AMOUNT = 4;
+                    int constexpr MIN_ENEMY_AMOUNT = 4;
+                    int constexpr TOTAL_POSITIONS = 1;
+                    int constexpr GRID_POS_X[TOTAL_POSITIONS] = {3};
+                    int constexpr GRID_POS_Y[TOTAL_POSITIONS] = {-3};
+                    int constexpr DURATION_TICKS[TOTAL_POSITIONS] = {0};
+                    int constexpr TRAJECTORY[TOTAL_POSITIONS] = {0};
                     int constexpr GRID_FINAL_POS_X[4] = {0, 0, 1, 1};
                     int constexpr GRID_FINAL_POS_Y[4] = {4, 5, 4, 5};
                 }
                 namespace Row_2{
                     inline constexpr bool MIXED = false;
                     int constexpr TYPE[1] = {5};
-                    int constexpr MIN_AMOUNT = 4;
+                    int constexpr MIN_ENEMY_AMOUNT = 4;
+                    int constexpr TOTAL_POSITIONS = 1;
+                    int constexpr GRID_POS_X[TOTAL_POSITIONS] = {3};
+                    int constexpr GRID_POS_Y[TOTAL_POSITIONS] = {-3};
+                    int constexpr DURATION_TICKS[TOTAL_POSITIONS] = {0};
+                    int constexpr TRAJECTORY[TOTAL_POSITIONS] = {0};
                     int constexpr GRID_FINAL_POS_X[4] = {8, 8, 9, 9};
                     int constexpr GRID_FINAL_POS_Y[4] = {4, 5, 4, 5};
                 }
@@ -140,14 +190,24 @@ namespace gm {
                 namespace Row_1{
                     inline constexpr bool MIXED = false;
                     int constexpr TYPE[1] = {4};
-                    int constexpr MIN_AMOUNT = 4;
+                    int constexpr MIN_ENEMY_AMOUNT = 4;
+                    int constexpr TOTAL_POSITIONS = 1;
+                    int constexpr GRID_POS_X[TOTAL_POSITIONS] = {3};
+                    int constexpr GRID_POS_Y[TOTAL_POSITIONS] = {-3};
+                    int constexpr DURATION_TICKS[TOTAL_POSITIONS] = {0};
+                    int constexpr TRAJECTORY[TOTAL_POSITIONS] = {0};
                     int constexpr GRID_FINAL_POS_X[4] = {4, 4, 5 ,5};
                     int constexpr GRID_FINAL_POS_Y[4] = {2, 3, 2, 3};
                 }
                 namespace Row_2{
                     inline constexpr bool MIXED = false;
                     int constexpr TYPE[1] = {5};
-                    int constexpr MIN_AMOUNT = 4;
+                    int constexpr MIN_ENEMY_AMOUNT = 4;
+                    int constexpr TOTAL_POSITIONS = 1;
+                    int constexpr GRID_POS_X[TOTAL_POSITIONS] = {3};
+                    int constexpr GRID_POS_Y[TOTAL_POSITIONS] = {-3};
+                    int constexpr DURATION_TICKS[TOTAL_POSITIONS] = {0};
+                    int constexpr TRAJECTORY[TOTAL_POSITIONS] = {0};
                     int constexpr GRID_FINAL_POS_X[4] = {4, 4, 5 ,5};
                     int constexpr GRID_FINAL_POS_Y[4] = {4, 5, 4, 5};
                 }
@@ -157,14 +217,24 @@ namespace gm {
                 namespace Row_1{
                     inline constexpr bool MIXED = false;
                     int constexpr TYPE[1] = {4};
-                    int constexpr MIN_AMOUNT = 4;
+                    int constexpr MIN_ENEMY_AMOUNT = 4;
+                    int constexpr TOTAL_POSITIONS = 1;
+                    int constexpr GRID_POS_X[TOTAL_POSITIONS] = {3};
+                    int constexpr GRID_POS_Y[TOTAL_POSITIONS] = {-3};
+                    int constexpr DURATION_TICKS[TOTAL_POSITIONS] = {0};
+                    int constexpr TRAJECTORY[TOTAL_POSITIONS] = {0};
                     int constexpr GRID_FINAL_POS_X[4] = {3, 3, 6, 6};
                     int constexpr GRID_FINAL_POS_Y[4] = {2, 3, 2, 3};
                 }
                 namespace Row_2{
                     inline constexpr bool MIXED = false;
                     int constexpr TYPE[1] = {2};
-                    int constexpr MIN_AMOUNT = 4;
+                    int constexpr MIN_ENEMY_AMOUNT = 4;
+                    int constexpr TOTAL_POSITIONS = 1;
+                    int constexpr GRID_POS_X[TOTAL_POSITIONS] = {3};
+                    int constexpr GRID_POS_Y[TOTAL_POSITIONS] = {-3};
+                    int constexpr DURATION_TICKS[TOTAL_POSITIONS] = {0};
+                    int constexpr TRAJECTORY[TOTAL_POSITIONS] = {0};
                     int constexpr GRID_FINAL_POS_X[4] = {3, 4, 5, 6};
                     int constexpr GRID_FINAL_POS_Y[4] = {1, 1, 1, 1};
                 }
@@ -174,14 +244,24 @@ namespace gm {
                 namespace Row_1{
                     inline constexpr bool MIXED = false;
                     int constexpr TYPE[1] = {4};
-                    int constexpr MIN_AMOUNT = 4;
+                    int constexpr MIN_ENEMY_AMOUNT = 4;
+                    int constexpr TOTAL_POSITIONS = 1;
+                    int constexpr GRID_POS_X[TOTAL_POSITIONS] = {3};
+                    int constexpr GRID_POS_Y[TOTAL_POSITIONS] = {-3};
+                    int constexpr DURATION_TICKS[TOTAL_POSITIONS] = {0};
+                    int constexpr TRAJECTORY[TOTAL_POSITIONS] = {0};
                     int constexpr GRID_FINAL_POS_X[4] = {1, 1, 2, 2};
                     int constexpr GRID_FINAL_POS_Y[4] = {2, 3, 2, 3};
                 }
                 namespace Row_2{
                     inline constexpr bool MIXED = false;
                     int constexpr TYPE[1] = {4};
-                    int constexpr MIN_AMOUNT = 4;
+                    int constexpr MIN_ENEMY_AMOUNT = 4;
+                    int constexpr TOTAL_POSITIONS = 1;
+                    int constexpr GRID_POS_X[TOTAL_POSITIONS] = {3};
+                    int constexpr GRID_POS_Y[TOTAL_POSITIONS] = {-3};
+                    int constexpr DURATION_TICKS[TOTAL_POSITIONS] = {0};
+                    int constexpr TRAJECTORY[TOTAL_POSITIONS] = {0};
                     int constexpr GRID_FINAL_POS_X[4] = {7, 7, 8, 8};
                     int constexpr GRID_FINAL_POS_Y[4] = {2, 3, 2, 3};
                 }
@@ -191,14 +271,24 @@ namespace gm {
                 namespace Row_1{
                     inline constexpr bool MIXED = false;
                     int constexpr TYPE[1] = {5};
-                    int constexpr MIN_AMOUNT = 4;
+                    int constexpr MIN_ENEMY_AMOUNT = 4;
+                    int constexpr TOTAL_POSITIONS = 1;
+                    int constexpr GRID_POS_X[TOTAL_POSITIONS] = {3};
+                    int constexpr GRID_POS_Y[TOTAL_POSITIONS] = {-3};
+                    int constexpr DURATION_TICKS[TOTAL_POSITIONS] = {0};
+                    int constexpr TRAJECTORY[TOTAL_POSITIONS] = {0};
                     int constexpr GRID_FINAL_POS_X[4] = {2, 2, 3, 3};
                     int constexpr GRID_FINAL_POS_Y[4] = {4, 5, 4, 5};
                 }
                 namespace Row_2{
                     inline constexpr bool MIXED = false;
                     int constexpr TYPE[1] = {5};
-                    int constexpr MIN_AMOUNT = 4;
+                    int constexpr MIN_ENEMY_AMOUNT = 4;
+                    int constexpr TOTAL_POSITIONS = 1;
+                    int constexpr GRID_POS_X[TOTAL_POSITIONS] = {3};
+                    int constexpr GRID_POS_Y[TOTAL_POSITIONS] = {-3};
+                    int constexpr DURATION_TICKS[TOTAL_POSITIONS] = {0};
+                    int constexpr TRAJECTORY[TOTAL_POSITIONS] = {0};
                     int constexpr GRID_FINAL_POS_X[4] = {6, 6, 7, 7};
                     int constexpr GRID_FINAL_POS_Y[4] = {4, 5, 4, 5};
                 }
@@ -208,14 +298,24 @@ namespace gm {
                 namespace Row_1{
                     inline constexpr bool MIXED = false;
                     int constexpr TYPE[1] = {5};
-                    int constexpr MIN_AMOUNT = 4;
+                    int constexpr MIN_ENEMY_AMOUNT = 4;
+                    int constexpr TOTAL_POSITIONS = 1;
+                    int constexpr GRID_POS_X[TOTAL_POSITIONS] = {3};
+                    int constexpr GRID_POS_Y[TOTAL_POSITIONS] = {-3};
+                    int constexpr DURATION_TICKS[TOTAL_POSITIONS] = {0};
+                    int constexpr TRAJECTORY[TOTAL_POSITIONS] = {0};
                     int constexpr GRID_FINAL_POS_X[4] = {0, 0, 1, 1};
                     int constexpr GRID_FINAL_POS_Y[4] = {4, 5, 4, 5};
                 }
                 namespace Row_2{
                     inline constexpr bool MIXED = false;
                     int constexpr TYPE[1] = {5};
-                    int constexpr MIN_AMOUNT = 4;
+                    int constexpr MIN_ENEMY_AMOUNT = 4;
+                    int constexpr TOTAL_POSITIONS = 1;
+                    int constexpr GRID_POS_X[TOTAL_POSITIONS] = {3};
+                    int constexpr GRID_POS_Y[TOTAL_POSITIONS] = {-3};
+                    int constexpr DURATION_TICKS[TOTAL_POSITIONS] = {0};
+                    int constexpr TRAJECTORY[TOTAL_POSITIONS] = {0};
                     int constexpr GRID_FINAL_POS_X[4] = {8, 8, 9, 9};
                     int constexpr GRID_FINAL_POS_Y[4] = {4, 5, 4, 5};
                 }
@@ -228,16 +328,29 @@ namespace gm {
                 namespace Row_1{
                     inline constexpr bool MIXED = false;
                     int constexpr TYPE[1] = {4};
-                    int constexpr MIN_AMOUNT = 4;
+                    int constexpr MIN_ENEMY_AMOUNT = 4;
+                    int constexpr TOTAL_POSITIONS = 4;
+                    int constexpr GRID_POS_X[TOTAL_POSITIONS] = {3,10, 20, 2};
+                    int constexpr GRID_POS_Y[TOTAL_POSITIONS] = {-3,10, 20, 2};
+                    int constexpr DURATION_TICKS[TOTAL_POSITIONS] = {0, 100, 100, 100};
+                    int constexpr TRAJECTORY[TOTAL_POSITIONS] = {0, 0};
                     int constexpr GRID_FINAL_POS_X[4] = {4, 5, 4 ,5};
                     int constexpr GRID_FINAL_POS_Y[4] = {2, 2, 3, 3};
+                    int constexpr DURATION[4] = {4, 8, 12, 16};
+
                 }
                 namespace Row_2{
                     inline constexpr bool MIXED = false;
                     int constexpr TYPE[1] = {5};
-                    int constexpr MIN_AMOUNT = 4;
+                    int constexpr MIN_ENEMY_AMOUNT = 4;
+                    int constexpr TOTAL_POSITIONS = 1;
+                    int constexpr GRID_POS_X[TOTAL_POSITIONS] = {6};
+                    int constexpr GRID_POS_Y[TOTAL_POSITIONS] = {-3};
+                    int constexpr DURATION_TICKS[TOTAL_POSITIONS] = {0};
+                    int constexpr TRAJECTORY[TOTAL_POSITIONS] = {0};
                     int constexpr GRID_FINAL_POS_X[4] = {4, 5, 4, 5};
                     int constexpr GRID_FINAL_POS_Y[4] = {4, 4, 5, 5};
+
                 }
             }
             namespace Wave_2{
@@ -245,7 +358,12 @@ namespace gm {
                 namespace Row_1{
                     inline constexpr bool MIXED = true;
                     int constexpr TYPE[2] = {2,4};
-                    int constexpr MIN_AMOUNT = 8;
+                    int constexpr MIN_ENEMY_AMOUNT = 8;
+                    int constexpr TOTAL_POSITIONS = 1;
+                    int constexpr GRID_POS_X[TOTAL_POSITIONS] = {3};
+                    int constexpr GRID_POS_Y[TOTAL_POSITIONS] = {-3};
+                    int constexpr DURATION_TICKS[TOTAL_POSITIONS] = {0};
+                    int constexpr TRAJECTORY[TOTAL_POSITIONS] = {0};
                     int constexpr GRID_FINAL_POS_X[8] = {3, 3, 4, 3, 5, 6, 6, 6};
                     int constexpr GRID_FINAL_POS_Y[8] = {1, 2, 1, 3, 1, 2, 1, 3};
                 }
@@ -255,7 +373,12 @@ namespace gm {
                 namespace Row_1{
                     inline constexpr bool MIXED = false;
                     int constexpr TYPE[1] = {4};
-                    int constexpr MIN_AMOUNT = 8;
+                    int constexpr MIN_ENEMY_AMOUNT = 8;
+                    int constexpr TOTAL_POSITIONS = 1;
+                    int constexpr GRID_POS_X[TOTAL_POSITIONS] = {3};
+                    int constexpr GRID_POS_Y[TOTAL_POSITIONS] = {-3};
+                    int constexpr DURATION_TICKS[TOTAL_POSITIONS] = {0};
+                    int constexpr TRAJECTORY[TOTAL_POSITIONS] = {0};
                     int constexpr GRID_FINAL_POS_X[8] = {1, 1, 2, 2, 7, 7, 8, 8};
                     int constexpr GRID_FINAL_POS_Y[8] = {2, 3, 2, 3, 2, 3, 2, 3};
                 }
@@ -265,7 +388,12 @@ namespace gm {
                 namespace Row_1{
                     inline constexpr bool MIXED = false;
                     int constexpr TYPE[1] = {5};
-                    int constexpr MIN_AMOUNT = 8;
+                    int constexpr MIN_ENEMY_AMOUNT = 8;
+                    int constexpr TOTAL_POSITIONS = 1;
+                    int constexpr GRID_POS_X[TOTAL_POSITIONS] = {3};
+                    int constexpr GRID_POS_Y[TOTAL_POSITIONS] = {-3};
+                    int constexpr DURATION_TICKS[TOTAL_POSITIONS] = {0};
+                    int constexpr TRAJECTORY[TOTAL_POSITIONS] = {0};
                     int constexpr GRID_FINAL_POS_X[8] = {2, 2, 3, 3, 6, 6, 7, 7};
                     int constexpr GRID_FINAL_POS_Y[8] = {4, 5, 4, 5, 4, 5, 4, 5};
                 }
@@ -275,7 +403,12 @@ namespace gm {
                 namespace Row_1{
                     inline constexpr bool MIXED = false;
                     int constexpr TYPE[1] = {5};
-                    int constexpr MIN_AMOUNT = 8;
+                    int constexpr MIN_ENEMY_AMOUNT = 8;
+                    int constexpr TOTAL_POSITIONS = 1;
+                    int constexpr GRID_POS_X[TOTAL_POSITIONS] = {3};
+                    int constexpr GRID_POS_Y[TOTAL_POSITIONS] = {-3};
+                    int constexpr DURATION_TICKS[TOTAL_POSITIONS] = {0};
+                    int constexpr TRAJECTORY[TOTAL_POSITIONS] = {0};
                     int constexpr GRID_FINAL_POS_X[8] = {0, 0, 1, 1, 8, 8, 9, 9};
                     int constexpr GRID_FINAL_POS_Y[8] = {4, 5, 4, 5, 4, 5, 4, 5};
                 }
@@ -284,7 +417,7 @@ namespace gm {
     }
 
     namespace Timestep {
-        inline const sf::Time FIXED = sf::milliseconds(1000.0f / 60.0f);
+        inline const sf::Time FIXED = sf::seconds(1.0f / 60.0f);
     }
     inline std::mt19937& rng() {
         static std::random_device rd;
