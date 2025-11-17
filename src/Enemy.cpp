@@ -10,14 +10,14 @@ int Enemy::_moveCtr = 0;
 int Enemy::_moveTotal = 5;
 
 Enemy::Enemy(sf::Vector2f finalPosition, int type, const sf::Vector2f patternPositions[], const int durationTicks[], const int patternState[], const int totalPositions): Entity(){
-    setPosition(finalPosition);
-    //setPosition(patternPositions[0]);
+    //setPosition(finalPosition);
+    setPosition(patternPositions[0]);
     _type = type;
     setEnemySprite();
     _centralPosition = finalPosition;
-    _startingPosition = patternPositions[0];
     _health = 1;
     _idle = false;
+    _returningIdle  = false;
     _movingPattern = true;
     _aniTotal = 2;
     _aniStartIndex = {6, 5};
@@ -154,19 +154,18 @@ void Enemy::moveEntity(){
         tmpPosition.x = _centralPosition.x + _offset;
         setPosition(tmpPosition);
         return;
-    }
-    //second state to reach idle position
-    else if(_movingPattern){
+    } else if(_movingPattern){
         sf::Vector2f tmpPosition = getPosition();
         sf::Vector2f curVelocity = {0,0};
         if(_trajectoryDurationCtr < _trajectoryDurationTotal){
             curVelocity = _velocities[_trajectoryDurationCtr];
             _trajectoryDurationCtr += 1;
         } else{
+            setPosition(_patternPositions[_ctrPattern]);
             _ctrPattern += 1;
             if(_ctrPattern >= 100  || (_ctrPattern > 1 && _durationTicks[_ctrPattern] == 0)){
                 _movingPattern = false;
-                _idle = true;
+                _idle = false;
                 return;
             }
             sf::Vector2f destinationPosition = _patternPositions[_ctrPattern];
@@ -200,9 +199,10 @@ void Enemy::moveEntity(){
                     }
                 }break;
             }
+            //delete this
             if(_ctrPattern != 99 && _patternPositions[_ctrPattern].x ==  _patternPositions[_ctrPattern+1].x && _patternPositions[_ctrPattern].y == _patternPositions[_ctrPattern+1].y){
                 _movingPattern = false;
-                _idle = true;
+                _idle = false;
             }
             moveEntity();
 
@@ -211,7 +211,32 @@ void Enemy::moveEntity(){
         tmpPosition.x += std::round(curVelocity.x);
         tmpPosition.y += std::round(curVelocity.y);
         setPosition(tmpPosition);
-        //move(curVelocity);
+    } else if(_returningIdle){
+        if(_trajectoryDurationCtr < _trajectoryDurationTotal){
+            _curVelocity = _velocities[_trajectoryDurationCtr];
+            _trajectoryDurationCtr += 1;
+            sf::Vector2f tmpPosition = getPosition();
+            tmpPosition.x += std::round(_curVelocity.x);
+            tmpPosition.y += std::round(_curVelocity.y);
+            setPosition(tmpPosition);
+        } else{
+            _returningIdle = false;
+            _idle = true;
+        }
+    }else{
+        if(_velocities){
+            delete _velocities;
+            _velocities = nullptr;
+        }
+        _velocities = new(std::nothrow) sf::Vector2f[50];
+        sf::Vector2f posDifference = _centralPosition - getPosition();
+        sf::Vector2f velocityDiff = {posDifference.x / 50, posDifference.y / 50};
+        for(int i = 0; i < 50; i++){
+            _velocities[i] = velocityDiff;
+        }
+        _returningIdle = true;
+        _trajectoryDurationCtr = 0;
+        _trajectoryDurationTotal = 50;
     }
 }
 

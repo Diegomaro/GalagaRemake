@@ -38,6 +38,7 @@ class Enemy: public Entity{
     private:
         int _type;
         bool _idle;
+        bool _returningIdle;
         bool _movingPattern;
 
 
@@ -45,9 +46,7 @@ class Enemy: public Entity{
         int _shootCooldown;
         static DoubleLinkedList<Bullet> bullets;
 
-
         sf::Vector2f _centralPosition;
-        sf::Vector2f _startingPosition;
 
         static int _moveCtr;
         static int _moveTotal;
@@ -60,7 +59,6 @@ class Enemy: public Entity{
         int _durationTicks[100];
         int _patternState[100];
         int _ctrPattern;
-
 
         sf::Vector2f _curVelocity;
         sf::Vector2f *_velocities;
