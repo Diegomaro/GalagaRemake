@@ -1,5 +1,6 @@
 #include "Enemy.hpp"
 #include <iostream>
+#include <cmath>
 
 bool Enemy::_directionOffset = true;
 float Enemy::_offset = 0.f;
@@ -227,16 +228,34 @@ void Enemy::moveEntity(){
                         _velocities[i] = velocityDiff;
                     }
                 }break;
-                case 1:{ // inwards
-                    sf::Vector2f velocityDiff = {differentialPosition.x / _trajectoryDurationTotal, differentialPosition.y / _trajectoryDurationTotal};
+                case 1:{ // inwards x
+                    sf::Vector2f velocityDiff = {0,0};
+                    float angle = 90.f / (_trajectoryDurationTotal - 1);
+                    angle = (angle * 3.14159265f) / 180.f;
+                    sf::Vector2f sum = {0,0};
                     for(int i = 0; i < _trajectoryDurationTotal; i++){
+                        velocityDiff = {(differentialPosition.x * cosf(i * angle)), differentialPosition.y * sinf(i * angle)};
                         _velocities[i] = velocityDiff;
+                        sum += velocityDiff;
+                    }
+                    sf::Vector2f multiplier = {differentialPosition.x/sum.x, differentialPosition.y/sum.y};
+                    for(int i = 0; i < _trajectoryDurationTotal; i++){
+                        _velocities[i] = {_velocities[i].x * multiplier.x, _velocities[i].y * multiplier.y};
                     }
                 }break;
-                case 2:{ //outwards
-                    sf::Vector2f velocityDiff = {differentialPosition.x / _trajectoryDurationTotal, differentialPosition.y / _trajectoryDurationTotal};
+                case 2:{ //outwards y
+                    sf::Vector2f velocityDiff = {0,0};
+                    float angle = 90.f / _trajectoryDurationTotal;
+                    angle = (angle * 3.14159265f) / 180.f;
+                    sf::Vector2f sum = {0,0};
                     for(int i = 0; i < _trajectoryDurationTotal; i++){
+                        velocityDiff = {(differentialPosition.x * sinf(i * angle)), differentialPosition.y * cosf(i * angle)};
                         _velocities[i] = velocityDiff;
+                        sum += velocityDiff;
+                    }
+                    sf::Vector2f multiplier = {differentialPosition.x/sum.x, differentialPosition.y/sum.y};
+                    for(int i = 0; i < _trajectoryDurationTotal; i++){
+                        _velocities[i] = {_velocities[i].x * multiplier.x, _velocities[i].y * multiplier.y};
                     }
                 }break;
             }
