@@ -5,6 +5,7 @@
 bool Enemy::_directionOffset = true;
 float Enemy::_offset = 0.f;
 float Enemy::_margin = 30.f;
+
 DoubleLinkedList<Bullet> Enemy::bullets;
 
 int Enemy::_moveCtr = 0;
@@ -16,7 +17,6 @@ int Enemy::_spawnCooldown = 0;;
 
 
 Enemy::Enemy(sf::Vector2f finalPosition, int type, const sf::Vector2f patternPositions[], const int durationTicks[], const int patternState[], const int totalPositions): Entity(){
-    //setPosition(finalPosition);
     setPosition(patternPositions[0]);
     _type = type;
     setEnemySprite();
@@ -135,7 +135,7 @@ void Enemy::resetSpawnCounter(){
 }
 
 bool Enemy::canSpawn(){
-    if(_spawnCooldown < 4){
+    if(_spawnCooldown < 0){
         stepSpawnCooldown();
         return false;
     } else{
@@ -203,7 +203,7 @@ void Enemy::moveEntity(){
             curVelocity = _velocities[_trajectoryDurationCtr];
             _trajectoryDurationCtr += 1;
         } else{
-            setPosition(_patternPositions[_ctrPattern]);
+            tmpPosition = _patternPositions[_ctrPattern];
             _ctrPattern += 1;
             if(_ctrPattern >= 100  || (_ctrPattern > 1 && _durationTicks[_ctrPattern] == 0)){
                 _movingPattern = false;
@@ -221,43 +221,41 @@ void Enemy::moveEntity(){
                 _velocities = nullptr;
             }
             _velocities = new(std::nothrow) sf::Vector2f[_trajectoryDurationTotal];
-            switch(pattern){
-                case 0:{ // linear
-                    sf::Vector2f velocityDiff = {differentialPosition.x / _trajectoryDurationTotal, differentialPosition.y / _trajectoryDurationTotal};
-                    for(int i = 0; i < _trajectoryDurationTotal; i++){
-                        _velocities[i] = velocityDiff;
-                    }
-                }break;
-                case 1:{ // inwards x
-                    sf::Vector2f velocityDiff = {0,0};
-                    float angle = 90.f / (_trajectoryDurationTotal - 1);
-                    angle = (angle * 3.14159265f) / 180.f;
-                    sf::Vector2f sum = {0,0};
-                    for(int i = 0; i < _trajectoryDurationTotal; i++){
+            /*
+            pattern = 0, linear
+            pattern = 1 inwards x
+            pattern = 2 inwards 45 x
+            pattern = 3 outwards y
+            pattern = 4 outwards 45 y
+            */
+            if(pattern == 0){
+                sf::Vector2f velocityDiff = {differentialPosition.x / _trajectoryDurationTotal, differentialPosition.y / _trajectoryDurationTotal};
+                for(int i = 0; i < _trajectoryDurationTotal; i++){
+                    _velocities[i] = velocityDiff;
+                }
+            } else{
+                sf::Vector2f velocityDiff = {0,0};
+                float angle = 0.f;
+                if(pattern == 1 || pattern == 3){
+                    angle = 90.f / (_trajectoryDurationTotal - 1);
+                } else{
+                    angle = 45.f / (_trajectoryDurationTotal - 1);
+                }
+                angle = (angle * 3.14159265f) / 180.f;
+                sf::Vector2f sum = {0,0};
+                for(int i = 0; i < _trajectoryDurationTotal; i++){
+                    if(pattern == 1 || pattern == 2){
                         velocityDiff = {(differentialPosition.x * cosf(i * angle)), differentialPosition.y * sinf(i * angle)};
-                        _velocities[i] = velocityDiff;
-                        sum += velocityDiff;
-                    }
-                    sf::Vector2f multiplier = {differentialPosition.x/sum.x, differentialPosition.y/sum.y};
-                    for(int i = 0; i < _trajectoryDurationTotal; i++){
-                        _velocities[i] = {_velocities[i].x * multiplier.x, _velocities[i].y * multiplier.y};
-                    }
-                }break;
-                case 2:{ //outwards y
-                    sf::Vector2f velocityDiff = {0,0};
-                    float angle = 90.f / _trajectoryDurationTotal;
-                    angle = (angle * 3.14159265f) / 180.f;
-                    sf::Vector2f sum = {0,0};
-                    for(int i = 0; i < _trajectoryDurationTotal; i++){
+                    } else{
                         velocityDiff = {(differentialPosition.x * sinf(i * angle)), differentialPosition.y * cosf(i * angle)};
-                        _velocities[i] = velocityDiff;
-                        sum += velocityDiff;
                     }
-                    sf::Vector2f multiplier = {differentialPosition.x/sum.x, differentialPosition.y/sum.y};
-                    for(int i = 0; i < _trajectoryDurationTotal; i++){
-                        _velocities[i] = {_velocities[i].x * multiplier.x, _velocities[i].y * multiplier.y};
-                    }
-                }break;
+                    _velocities[i] = velocityDiff;
+                    sum += velocityDiff;
+                }
+                sf::Vector2f multiplier = {differentialPosition.x/sum.x, differentialPosition.y/sum.y};
+                for(int i = 0; i < _trajectoryDurationTotal; i++){
+                    _velocities[i] = {_velocities[i].x * multiplier.x, _velocities[i].y * multiplier.y};
+                }
             }
             moveEntity();
         }
@@ -291,15 +289,16 @@ void Enemy::moveEntity(){
             delete _velocities;
             _velocities = nullptr;
         }
-        _velocities = new(std::nothrow) sf::Vector2f[50];
-        sf::Vector2f posDifference = _centralPosition - getPosition();
-        sf::Vector2f velocityDiff = {posDifference.x / 50, posDifference.y / 50};
-        for(int i = 0; i < 50; i++){
+        _velocities = new(std::nothrow) sf::Vector2f[30];
+        sf::Vector2f posDifference = _centralPosition + - getPosition();
+        //posDifference.x += _offset;
+        sf::Vector2f velocityDiff = {posDifference.x / 30, posDifference.y / 30};
+        for(int i = 0; i < 30; i++){
             _velocities[i] = velocityDiff;
         }
         _returningIdle = true;
         _trajectoryDurationCtr = 0;
-        _trajectoryDurationTotal = 50;
+        _trajectoryDurationTotal = 30;
     }
 }
 

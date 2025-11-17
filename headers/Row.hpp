@@ -10,7 +10,7 @@ class Row{
         //void resetNextAcceleration();
         //bool hasNextAcceleration();
         //sf::Vector2f getNextAcceleration();
-
+        int _enemyAmount;
     private:
         static sf::Vector2f startPos;
         static sf::Vector2f acceleration[];

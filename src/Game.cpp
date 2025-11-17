@@ -8,7 +8,8 @@ Game::Game():
     points(0),
     stage(nullptr),
     wave(nullptr),
-    row(nullptr) {}
+    row1(nullptr),
+    row2(nullptr) {}
 
 void Game::start(){
     loadSprites();
@@ -16,7 +17,7 @@ void Game::start(){
     createBackground();
     createStage();
     window.setVisible(true);
-    Enemy::setTotalSpawn(8);
+    createNextWave();
     while(window.isOpen()){
         loop();
     }
@@ -31,51 +32,45 @@ void Game::createPlayer(){
     player.setTexture(rm.getTexture("sprites"));
 }
 
-bool Game::createNextEnemy(){
-    if(row->enemies.hasNext()){
-        Enemy *nextEnemy = row->enemies.getNextNodeData();
+bool Game::createNextEnemyPair(){
+    if(row1->enemies.hasNext()){
+        Enemy *nextEnemy = row1->enemies.getNextNodeData();
         nextEnemy->setTexture(rm.getTexture("sprites"));
         enemies.insertTail(*nextEnemy);
-    } else{
-        if(wave->rows.hasNext()){
-            row = wave->rows.getNextNodeData();
-            createNextEnemy();
-        } else{
-            if(stage->waves.hasNext()){
-                wave = stage->waves.getNextNodeData();
-                createNextEnemy();
-            } else{
-                return false;
-                std::cout << "Finished!" << std::endl;
-            }
+        if(row2->enemies.hasNext()){
+            Enemy *nextEnemy = row2->enemies.getNextNodeData();
+            nextEnemy->setTexture(rm.getTexture("sprites"));
+            enemies.insertTail(*nextEnemy);
         }
-     }
+    } else{
+        if(stage->waves.hasNext()){
+            wave = stage->waves.getNextNodeData();
+            if(wave->rows.hasNext()){
+                row1 = wave->rows.getNextNodeData();
+            }
+            if(wave->rows.hasNext()){
+                row2 = wave->rows.getNextNodeData();
+            }
+            createNextEnemyPair();
+        } else{
+            std::cout << "Finished!" << std::endl;
+            return false;
+        }
+    }
     return true;
 }
 
-bool Game::createNextRow(){
-    bool rowCreated = false;
-    while(row->enemies.hasNext()){
-        rowCreated = true;
-        Enemy *nextEnemy = row->enemies.getNextNodeData();
-        nextEnemy->setTexture(rm.getTexture("sprites"));
-        enemies.insertTail(*nextEnemy);
+bool Game::createNextWave(){
+    int amountToSpawn = 0;
+    if(row1){
+        amountToSpawn = row1->_enemyAmount;
     }
-    if(!rowCreated){
-        if(wave->rows.hasNext()){
-            row = wave->rows.getNextNodeData();
-            createNextRow();
-        } else{
-            if(stage->waves.hasNext()){
-                wave = stage->waves.getNextNodeData();
-                createNextRow();
-            } else{
-                return false;
-                std::cout << "Finished!" << std::endl;
-            }
-        }
+    if(!Enemy::canSpawn()){
+        Enemy::resetSpawnCounter();
+        Enemy::setTotalSpawn(amountToSpawn);
+        return true;
     }
-    return true;
+    return false;
 }
 
 void Game::createDeadEnemy(sf::Vector2f position){
@@ -101,7 +96,10 @@ void Game::createStage(){
     if(stage->waves.hasNext()){
         wave = stage->waves.getNextNodeData();
         if(wave->rows.hasNext()){
-            row = wave->rows.getNextNodeData();
+            row1 = wave->rows.getNextNodeData();
+        }
+        if(wave->rows.hasNext()){
+            row2 = wave->rows.getNextNodeData();
         }
     }
 }
@@ -115,6 +113,15 @@ void Game::loop(){
         updateLogic();
         updateAnimations();
         render();
+    }
+
+    fpsFrameCount++;
+    float elapsed = fpsClock.getElapsedTime().asSeconds();
+
+    if (elapsed >= 1.0f) {
+        std::cout << "UPS: " << fpsFrameCount / elapsed << std::endl;
+        fpsFrameCount = 0;
+        fpsClock.restart();
     }
 }
 
@@ -165,7 +172,7 @@ void Game::updatePlayer(){
 
 void Game::updateEnemyCreation(){
     if(Enemy::canSpawn()){
-        createNextEnemy();
+        createNextEnemyPair();
     }
 }
 

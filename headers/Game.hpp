@@ -21,8 +21,8 @@ class Game{
     private:
         void loadSprites();
         void createPlayer();
-        bool createNextEnemy();
-        bool createNextRow();
+        bool createNextEnemyPair();
+        bool createNextWave();
         void createDeadPlayer(sf::Vector2f position);
         void createDeadEnemy(sf::Vector2f position);
         void createBackground();
@@ -53,7 +53,11 @@ class Game{
         StageManager stageManager;
         Stage *stage;
         Wave *wave;
-        Row *row;
+        Row *row1;
+        Row *row2;
 
         Background background;
+
+        sf::Clock fpsClock;
+        int fpsFrameCount = 0;
 };
