@@ -23,7 +23,6 @@ class Game{
         void createPlayer();
         bool createNextEnemy();
         bool createNextRow();
-        //void createEnemy(sf::Vector2f position, int type);
         void createDeadPlayer(sf::Vector2f position);
         void createDeadEnemy(sf::Vector2f position);
         void createBackground();
@@ -32,6 +31,7 @@ class Game{
         void moveEntities();
 
         void updatePlayer();
+        void updateEnemyCreation();
         void updateShootColdown();
         void updateEnemiesShoot();
         void updateDeadEntities();

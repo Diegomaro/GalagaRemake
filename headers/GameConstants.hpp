@@ -330,14 +330,12 @@ namespace gm {
                     int constexpr TYPE[1] = {4};
                     int constexpr MIN_ENEMY_AMOUNT = 4;
                     int constexpr TOTAL_POSITIONS = 4;
-                    int constexpr GRID_POS_X[TOTAL_POSITIONS] = {3,10, 20, 2};
-                    int constexpr GRID_POS_Y[TOTAL_POSITIONS] = {-3,10, 20, 2};
+                    int constexpr GRID_POS_X[TOTAL_POSITIONS] = {3, 10, 20, 2};
+                    int constexpr GRID_POS_Y[TOTAL_POSITIONS] = {-3, 10, 20, 2};
                     int constexpr DURATION_TICKS[TOTAL_POSITIONS] = {0, 100, 100, 100};
                     int constexpr TRAJECTORY[TOTAL_POSITIONS] = {0, 0};
                     int constexpr GRID_FINAL_POS_X[4] = {4, 5, 4 ,5};
                     int constexpr GRID_FINAL_POS_Y[4] = {2, 2, 3, 3};
-                    int constexpr DURATION[4] = {4, 8, 12, 16};
-
                 }
                 namespace Row_2{
                     inline constexpr bool MIXED = false;

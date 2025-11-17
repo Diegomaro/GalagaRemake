@@ -19,6 +19,13 @@ class Enemy: public Entity{
         void setCanShoot(bool canShoot);
         bool getCanShoot();
 
+        static void setTotalSpawn(int spawnTotal);
+        static void resetSpawnCounter();
+        static bool canSpawn();
+        static void stepSpawnCounter();
+        static void resetSpawnCooldown();
+        static void stepSpawnCooldown();
+
         static void resetNextBullet();
         static bool hasNextBullet();
         static Bullet &getNextBullet();
@@ -47,6 +54,10 @@ class Enemy: public Entity{
         static DoubleLinkedList<Bullet> bullets;
 
         sf::Vector2f _centralPosition;
+
+        static int _spawnCtr;
+        static int _spawnTotal;
+        static int _spawnCooldown;
 
         static int _moveCtr;
         static int _moveTotal;

@@ -9,6 +9,11 @@ DoubleLinkedList<Bullet> Enemy::bullets;
 int Enemy::_moveCtr = 0;
 int Enemy::_moveTotal = 5;
 
+int Enemy::_spawnCtr = 0;
+int Enemy::_spawnTotal = 0;
+int Enemy::_spawnCooldown = 0;;
+
+
 Enemy::Enemy(sf::Vector2f finalPosition, int type, const sf::Vector2f patternPositions[], const int durationTicks[], const int patternState[], const int totalPositions): Entity(){
     //setPosition(finalPosition);
     setPosition(patternPositions[0]);
@@ -54,7 +59,8 @@ void Enemy::setType(int type){
 
 int Enemy::getType(){
     return _type;
-}
+}        static int _spawnCooldown;
+
 
 void Enemy::resetShootCooldown(){
     _shootCooldown = gm::Enemy::SHOOT_COOLDOWN;
@@ -119,6 +125,41 @@ float Enemy::getOffset(){
     return _offset;
 }
 
+void Enemy::setTotalSpawn(int spawnTotal){
+    _spawnTotal = spawnTotal;
+}
+
+void Enemy::resetSpawnCounter(){
+    _spawnCtr = 0;
+}
+
+bool Enemy::canSpawn(){
+    if(_spawnCooldown < 4){
+        stepSpawnCooldown();
+        return false;
+    } else{
+        resetSpawnCooldown();
+        if(_spawnCtr < _spawnTotal){
+            stepSpawnCounter();
+            return true;
+        }
+        return false;
+    }
+}
+
+void Enemy::stepSpawnCounter(){
+    if(_spawnCtr <= _spawnTotal){
+        _spawnCtr += 1;
+    }
+}
+
+void Enemy::resetSpawnCooldown(){
+    _spawnCooldown = 0;
+}
+
+void Enemy::stepSpawnCooldown(){
+    _spawnCooldown += 1;
+}
 
 void Enemy::resetNextBullet(){
     bullets.resetNext();
@@ -199,17 +240,15 @@ void Enemy::moveEntity(){
                     }
                 }break;
             }
-            //delete this
-            if(_ctrPattern != 99 && _patternPositions[_ctrPattern].x ==  _patternPositions[_ctrPattern+1].x && _patternPositions[_ctrPattern].y == _patternPositions[_ctrPattern+1].y){
-                _movingPattern = false;
-                _idle = false;
-            }
             moveEntity();
-
         }
         _curVelocity = curVelocity;
         tmpPosition.x += std::round(curVelocity.x);
         tmpPosition.y += std::round(curVelocity.y);
+        if(_trajectoryDurationCtr < _trajectoryDurationTotal){
+            sf::Vector2f remainder = {_curVelocity.x - std::round(_curVelocity.x), _curVelocity.y - std::round(_curVelocity.y)};
+            _velocities[_trajectoryDurationCtr] += remainder;
+        }
         setPosition(tmpPosition);
     } else if(_returningIdle){
         if(_trajectoryDurationCtr < _trajectoryDurationTotal){
@@ -218,8 +257,13 @@ void Enemy::moveEntity(){
             sf::Vector2f tmpPosition = getPosition();
             tmpPosition.x += std::round(_curVelocity.x);
             tmpPosition.y += std::round(_curVelocity.y);
+            if(_trajectoryDurationCtr < _trajectoryDurationTotal){
+                sf::Vector2f remainder = {_curVelocity.x - std::round(_curVelocity.x), _curVelocity.y - std::round(_curVelocity.y)};
+                _velocities[_trajectoryDurationCtr] += remainder;
+            }
             setPosition(tmpPosition);
         } else{
+            setPosition(_centralPosition);
             _returningIdle = false;
             _idle = true;
         }
@@ -280,6 +324,6 @@ void Enemy::setStateROM(const int patternState[], int count){
 }
 
 bool Enemy::operator==(Enemy &enemy){
-    if(getPosition() == enemy.getPosition()) return true;
+    if(getPosition() == enemy.getPosition() && getVelocity() == enemy.getVelocity()) return true;
     return false;
 }

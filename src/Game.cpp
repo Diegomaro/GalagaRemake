@@ -16,7 +16,7 @@ void Game::start(){
     createBackground();
     createStage();
     window.setVisible(true);
-    createNextRow();
+    Enemy::setTotalSpawn(8);
     while(window.isOpen()){
         loop();
     }
@@ -49,8 +49,7 @@ bool Game::createNextEnemy(){
                 std::cout << "Finished!" << std::endl;
             }
         }
-
-    }
+     }
     return true;
 }
 
@@ -75,17 +74,9 @@ bool Game::createNextRow(){
                 std::cout << "Finished!" << std::endl;
             }
         }
-
     }
     return true;
 }
-
-/*
-void Game::createEnemy(sf::Vector2f position, int type){
-    Enemy enemy(position, type);
-    enemy.setTexture(rm.getTexture("sprites"));
-    enemies.insertTail(enemy);
-}*/
 
 void Game::createDeadEnemy(sf::Vector2f position){
     DeadEntity deadEntity(position, {15, 0, 32, 32}, 5, 5);
@@ -155,6 +146,7 @@ void Game::eventHandler(){
 
 void Game::updateLogic(){
     updatePlayer();
+    updateEnemyCreation();
     updateDeadEntities();
     updateShootColdown();
     moveEntities();
@@ -168,6 +160,12 @@ void Game::updatePlayer(){
         if(player.getRespawnCooldown() <= 0){
             player.reactivate();
         }
+    }
+}
+
+void Game::updateEnemyCreation(){
+    if(Enemy::canSpawn()){
+        createNextEnemy();
     }
 }
 
