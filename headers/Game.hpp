@@ -23,6 +23,10 @@ class Game{
         void createPlayer();
         bool createNextEnemyPair();
         bool createNextWave();
+        void resetWaveCooldown();
+        void stepWaveCooldown();
+        bool canSpawnWave();
+
         void createDeadPlayer(sf::Vector2f position);
         void createDeadEnemy(sf::Vector2f position);
         void createBackground();
@@ -55,6 +59,7 @@ class Game{
         Wave *wave;
         Row *row1;
         Row *row2;
+        int waveCooldown;
 
         Background background;
 

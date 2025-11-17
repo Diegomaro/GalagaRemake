@@ -47,6 +47,7 @@ namespace gm {
     }
 
     namespace Stage {
+        inline constexpr int WAVE_COOLDOWN = 200;
         namespace Scene_1{
             namespace Wave_1{
                 inline constexpr int count = 2;

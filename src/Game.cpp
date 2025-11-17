@@ -16,8 +16,8 @@ void Game::start(){
     createPlayer();
     createBackground();
     createStage();
+    resetWaveCooldown();
     window.setVisible(true);
-    createNextWave();
     while(window.isOpen()){
         loop();
     }
@@ -43,31 +43,45 @@ bool Game::createNextEnemyPair(){
             enemies.insertTail(*nextEnemy);
         }
     } else{
-        if(stage->waves.hasNext()){
-            wave = stage->waves.getNextNodeData();
-            if(wave->rows.hasNext()){
-                row1 = wave->rows.getNextNodeData();
-            }
-            if(wave->rows.hasNext()){
-                row2 = wave->rows.getNextNodeData();
-            }
-            createNextEnemyPair();
-        } else{
-            std::cout << "Finished!" << std::endl;
-            return false;
-        }
+        std::cout << "Finished!" << std::endl;
+        return false;
     }
     return true;
 }
 
 bool Game::createNextWave(){
     int amountToSpawn = 0;
+    if(stage->waves.hasNext()){
+        wave = stage->waves.getNextNodeData();
+        if(wave->rows.hasNext()){
+            row1 = wave->rows.getNextNodeData();
+        }
+        if(wave->rows.hasNext()){
+            row2 = wave->rows.getNextNodeData();
+        }
+    } else{
+        return false;
+    }
     if(row1){
         amountToSpawn = row1->_enemyAmount;
     }
-    if(!Enemy::canSpawn()){
         Enemy::resetSpawnCounter();
         Enemy::setTotalSpawn(amountToSpawn);
+        return true;
+}
+
+void Game::resetWaveCooldown(){
+    waveCooldown = gm::Stage::WAVE_COOLDOWN;
+}
+
+void Game::stepWaveCooldown(){
+    if(waveCooldown > 0){
+        waveCooldown -= 1;
+    }
+}
+
+bool Game::canSpawnWave(){
+    if(waveCooldown == 0){
         return true;
     }
     return false;
@@ -101,6 +115,7 @@ void Game::createStage(){
         if(wave->rows.hasNext()){
             row2 = wave->rows.getNextNodeData();
         }
+        Enemy::setTotalSpawn(row1->_enemyAmount);
     }
 }
 
@@ -173,6 +188,13 @@ void Game::updatePlayer(){
 void Game::updateEnemyCreation(){
     if(Enemy::canSpawn()){
         createNextEnemyPair();
+        resetWaveCooldown();
+    } else {
+        stepWaveCooldown();
+        if(canSpawnWave()){
+            createNextWave();
+            resetWaveCooldown();
+        }
     }
 }
 

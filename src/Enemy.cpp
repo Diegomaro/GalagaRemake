@@ -135,7 +135,7 @@ void Enemy::resetSpawnCounter(){
 }
 
 bool Enemy::canSpawn(){
-    if(_spawnCooldown < 0){
+    if(_spawnCooldown < 4){
         stepSpawnCooldown();
         return false;
     } else{
